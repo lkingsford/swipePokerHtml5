@@ -3,7 +3,9 @@
     "extends": [
         "tslint:recommended"
     ],
-    "jsRules": {},
+    "jsRules": {
+        "no-console": false
+    },
     "rules": {},
     "rulesDirectory": []
 }
