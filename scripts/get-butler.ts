@@ -36,6 +36,11 @@ function main() {
         }
         let z = new AdmZip(result.data)
         z.extractAllTo('utils', true);
+
+        if (os.type() != "Windows_NT")
+        {
+            fs.chmodSync("utils/butler", 0o777)
+        }
     } );
 }
 

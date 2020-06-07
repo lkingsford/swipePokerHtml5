@@ -7,8 +7,9 @@
     "start": "webpack-dev-server --mode development --config webpack.config.dev.js",
     "build": "webpack --mode development --config webpack.config.dev.js",
     "build_prod": "webpack --mode production --config webpack.config.prod.js",
+    "build_scripts": "tsc -p scripts",
     "publish": "node utils/push-butler.js nerdygentleman/itch-test:game",
-    "postinstall": "tsc -p scripts && node utils/get-butler.js"
+    "postinstall": "npm run-script build_scripts; node utils/get-butler.js"
   },
   "keywords": [],
   "author": "",
