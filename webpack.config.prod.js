@@ -1,6 +1,8 @@
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HTMLWebpackPlugin = require('html-webpack-plugin')
 const TerserWebpackPlugin = require('terser-webpack-plugin')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const webpack = require('webpack'); 
 
 const path = require('path');
 
@@ -34,6 +36,7 @@ module.exports = {
     path: path.resolve(__dirname, 'dist_prod'),
   },
   plugins: [
+    new webpack.ProgressPlugin(),
     new CopyWebpackPlugin({
       patterns: [
         { from: 'build/assets', to: 'assets' },
@@ -42,6 +45,9 @@ module.exports = {
     new HTMLWebpackPlugin({
       hash: true,
       minify: false
-    })
+    }),
+    new CleanWebpackPlugin({
+      verbose: true,
+    }),
   ]
 };
