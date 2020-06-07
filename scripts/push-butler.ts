@@ -19,9 +19,11 @@ else
     butlerPath = "./" + butlerPath
 }
 
-exec(butlerPath + " push dist_prod " + channel, (err: any, stdout: any, stderr: any) => {
+exec(butlerPath + " push dist_prod " + channel, {shell: true}, (err: any, stdout: any, stderr: any) => {
     if (err) {
         console.log(`error: ${err.message}`);
+        console.log(`stderr: ${stderr}`);
+        console.log(`stdout: ${stdout}`);
         return;
     }
     if (stderr) {
