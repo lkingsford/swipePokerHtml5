@@ -14,6 +14,10 @@ let butlerPath = path.join("utils", "butler")
 if (os.type() === "Windows_NT") {
     butlerPath += ".exe"
 }
+else
+{
+    butlerPath = "./" + butlerPath
+}
 
 exec(butlerPath + " push dist_prod " + channel, (err: any, stdout: any, stderr: any) => {
     if (err) {
