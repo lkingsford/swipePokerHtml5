@@ -4,8 +4,9 @@
   "description": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack-dev-server --mode development",
-    "build": "webpack --mode development"
+    "start": "webpack-dev-server --mode development --config webpack.config.dev.js",
+    "build": "webpack --mode development --config webpack.config.dev.js",
+    "build_prod": "webpack --mode production --config webpack.config.prod.js"
   },
   "keywords": [],
   "author": "",
@@ -14,6 +15,7 @@
     "@types/pixi.js": "^5.0.0",
     "copy-webpack-plugin": "^6.0.2",
     "html-webpack-plugin": "^4.3.0",
+    "terser-webpack-plugin": "^3.0.3",
     "ts-loader": "^7.0.5",
     "tslint": "^6.1.2",
     "typescript": "^3.9.5",
