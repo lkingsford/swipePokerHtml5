@@ -6,7 +6,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack-dev-server --mode development --config webpack.config.dev.js",
     "build": "webpack --mode development --config webpack.config.dev.js",
-    "build_prod": "webpack --mode production --config webpack.config.prod.js"
+    "build_prod": "webpack --mode production --config webpack.config.prod.js",
+    "postinstall": "./get-butler.ps1",
+    "publish": "./utils/butler.exe push dist_prod nerdygentleman/itch-test:game"
   },
   "keywords": [],
   "author": "",

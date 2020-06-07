@@ -40,3 +40,6 @@ dist_prod/**/*
 
 # ignore yarn.lock
 yarn.lock
+
+utils/**
+tmp/**
