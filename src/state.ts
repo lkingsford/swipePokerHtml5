@@ -21,33 +21,33 @@ export class State {
     private lastState: State | null = null;
     private curState: State | null = null;
 
-    protected setState(nextState: State) {
+    setState(nextState: State) : void {
         if (this.curState != null)
         {
             this.curState.onDone();
         }
         this.curState = nextState;
-    }
+    };
 
     pause(): void {
         this.onPause();
         this.app.stage.removeChild(this.container);
-    }
+    };
 
     resume(): void {
         this.onResume();
         this.app.stage.addChild(this.container);
-    }
+    };
 
     start(): void {
         this.onStart();
         this.app.stage.addChild(this.container);
-    }
+    };
 
     done(): void {
         this.onDone();
         this.app.stage.removeChild(this.container);
-    }
+    };
 
     loop(delta: number): boolean {
         if (this.curState == null) {
@@ -55,14 +55,14 @@ export class State {
             return this.onLoop(delta);
         }
         if (this.lastState != this.curState) {
-            this.onPause();
+            this.pause();
             this.curState.onStart();
         }
         this.lastState = this.curState;
         if (!this.curState.loop(delta)) {
             this.curState.onDone();
             this.curState = null;
-            this.onResume();
+            this.resume();
         }
         return true;
     }
