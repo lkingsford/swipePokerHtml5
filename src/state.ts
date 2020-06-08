@@ -13,7 +13,7 @@ export class State {
     }
 
     onStart(): void {};
-    onLoop(): boolean { return false };
+    onLoop(delta: number): boolean { return false };
     onDone(): void {};
     onPause(): void {};
     onResume(): void {};
@@ -49,17 +49,17 @@ export class State {
         this.app.stage.removeChild(this.container);
     }
 
-    loop(): boolean {
+    loop(delta: number): boolean {
         if (this.curState == null) {
             this.lastState = null;
-            return this.onLoop();
+            return this.onLoop(delta);
         }
         if (this.lastState != this.curState) {
             this.onPause();
             this.curState.onStart();
         }
         this.lastState = this.curState;
-        if (!this.curState.loop()) {
+        if (!this.curState.loop(delta)) {
             this.curState.onDone();
             this.curState = null;
             this.onResume();

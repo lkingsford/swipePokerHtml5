@@ -15,12 +15,12 @@ let titleState: Title;
 function start_loop(app: PIXI.Application, resources:  { [index: string]: PIXI.LoaderResource }) : void {
   titleState = new Title(app, resources);
   titleState.start();
-  update();
+  app.ticker.add((delta: number) => update(delta))
+  app.ticker.start()
 }
 
-function update() {
-  titleState.loop();
-  requestAnimationFrame(update);
+function update(delta: number) {
+  titleState.loop(delta);
 }
 
 const loading_text_style = new PIXI.TextStyle();
