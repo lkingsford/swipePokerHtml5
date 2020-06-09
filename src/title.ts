@@ -31,4 +31,9 @@ export class Title extends State.State {
         let gameState = new Game(this.app, this.resources);
         super.setState(gameState);
     }
+
+    static addResources(loader: PIXI.Loader):  void
+    {
+        loader.add("title_texture", "assets/Title.png");
+    }
 }

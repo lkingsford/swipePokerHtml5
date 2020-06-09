@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js'
 import { Title } from './title'
+import { Game } from './game'
 
 const app = new PIXI.Application({ width: 720, height: 960, backgroundColor: 0xDDDDFF });
 
@@ -21,11 +22,8 @@ function resize(ev: Event) {
 */
 
 const loader: PIXI.Loader = PIXI.Loader.shared;
-
-loader.add("cards_texture", "assets/Cards.png");
-loader.add("hands_texture", "assets/Hands.png");
-
-loader.add("title_texture", "assets/Title.png");
+Game.addResources(loader)
+Title.addResources(loader)
 
 let titleState: Title;
 
@@ -49,5 +47,6 @@ app.stage.addChild(loading_text_sprite)
 loader.load((loader: PIXI.Loader, resources: Partial<Record<string, PIXI.LoaderResource>>) => {
   loading_text_sprite.destroy()
   console.log("Resources loaded")
+  Game.getTextures(loader.resources)
   start_loop(app, loader.resources)
 })
