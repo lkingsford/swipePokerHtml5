@@ -44,7 +44,8 @@ module.exports = {
     }),
     new HTMLWebpackPlugin({
       hash: true,
-      minify: false
+      minify: false,
+      template: 'build/html/index.html'
     }),
     new CleanWebpackPlugin({
       verbose: true,

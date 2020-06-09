@@ -32,6 +32,8 @@ module.exports = {
             { from: 'build/assets', to: 'assets' },
         ]
     }),
-    new HTMLWebpackPlugin()
+    new HTMLWebpackPlugin({
+      template: 'build/html/index.html'
+    })
   ]
 };

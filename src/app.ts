@@ -1,18 +1,35 @@
 import * as PIXI from 'pixi.js'
 import { Title } from './title'
 
-const app = new PIXI.Application({width: 720, height: 960, backgroundColor: 0xDDDDFF});
+const app = new PIXI.Application({ width: 720, height: 960, backgroundColor: 0xDDDDFF });
 
-const sprites: { [key: string] : PIXI.Texture } = {};
+const sprites: { [key: string]: PIXI.Texture } = {};
 
 document.body.appendChild(app.view);
 
+/*
+window.addEventListener("resize", resize)
+window.addEventListener("mozfullscreenchange", ()=>{console.log("Mozfullscreenchange");})
+window.addEventListener("fullscreenchange", ()=>{console.log("fullscreenchange");})
+window.addEventListener("webkitfullscreenchange", ()=>{console.log("webkitfullscreenchange");})
+window.addEventListener("msfullscreenchange", ()=>{console.log("msfullscreenchange");})
+
+function resize(ev: Event) {
+  let target = ev.target as Window
+  console.log(target.innerWidth, target.outerWidth)
+}
+*/
+
 const loader: PIXI.Loader = PIXI.Loader.shared;
+
+loader.add("cards_texture", "assets/Cards.png");
+loader.add("hands_texture", "assets/Hands.png");
+
 loader.add("title_texture", "assets/Title.png");
 
 let titleState: Title;
 
-function start_loop(app: PIXI.Application, resources:  { [index: string]: PIXI.LoaderResource }) : void {
+function start_loop(app: PIXI.Application, resources: { [index: string]: PIXI.LoaderResource }): void {
   titleState = new Title(app, resources);
   titleState.start();
   app.ticker.add((delta: number) => update(delta))
