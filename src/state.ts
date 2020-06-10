@@ -56,11 +56,11 @@ export class State {
         }
         if (this.lastState != this.curState) {
             this.pause();
-            this.curState.onStart();
+            this.curState.start();
         }
         this.lastState = this.curState;
         if (!this.curState.loop(delta)) {
-            this.curState.onDone();
+            this.curState.done();
             this.curState = null;
             this.resume();
         }
