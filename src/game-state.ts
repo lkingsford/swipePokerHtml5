@@ -121,7 +121,7 @@ export class GameState extends State {
                     if (selected.length == 5) {
                         let cards = selected.filter((i) => (i.card != null))
                             .map((i) => i.card!)
-                        let hasHand = Game.GetHand(cards) != null;
+                        let hasHand = Game.GetHand(cards).valid;
                         for (let x = 0; x < Game.TABLE_WIDTH; ++x)
                             for (let y = 0; y < Game.TABLE_HEIGHT; ++y) {
                                 let cell = this.cells[x][y]
