@@ -35,8 +35,15 @@ export class GameState extends State {
         if (GameState.rankTextures == undefined) {
             console.warn("getTextures should be called before Game is constructed");
         }
+        this.playfield = new PIXI.Container();
+        this.container.addChild(this.playfield);
+        this.playfield.scale = new PIXI.Point(1.25, 1.25);
+        this.playfield.x = 60;
+        this.playfield.y = 60;
         this.updateScore();
     }
+
+    playfield: PIXI.Container;
 
     getSelected(): Cell[] {
         let selected: Cell[] = []
@@ -155,7 +162,7 @@ export class GameState extends State {
         let y = cell.y;
         cell.selected = value;
         if (this.cells[x][y].backSprite)
-            this.container.removeChild(cell.backSprite!);
+            this.playfield.removeChild(cell.backSprite!);
         if (value != Back.None) {
             let backSprite = new PIXI.Sprite(GameState.backTextures[value]);
             backSprite.x = x * CARD_WIDTH;
@@ -163,7 +170,7 @@ export class GameState extends State {
             cell.backSprite = backSprite;
             backSprite.interactive = true;
             backSprite.on("pointerdown", () => this.tapCell(this.cells[x][y]))
-            this.container.addChildAt(cell.backSprite, 0);
+            this.playfield.addChildAt(cell.backSprite, 0);
             return backSprite;
         }
         else {
@@ -189,9 +196,9 @@ export class GameState extends State {
                 let card = this.game?.cards[x][y]
                 if (this.cells[x][y].card != card) {
                     if (this.cells[x][y].rankSprite)
-                        this.container.removeChild(this.cells[x][y].rankSprite!);
+                        this.playfield.removeChild(this.cells[x][y].rankSprite!);
                     if (this.cells[x][y].suitSprite)
-                        this.container.removeChild(this.cells[x][y].suitSprite!);
+                        this.playfield.removeChild(this.cells[x][y].suitSprite!);
                     let backSprite = this.setCellSelected(this.cells[x][y], Back.Available)
                     if (card) {
                         let suitSprite = new PIXI.Sprite(GameState.suitTextures[card?.suit!]);
@@ -201,8 +208,8 @@ export class GameState extends State {
                         suitSprite.y = y * CARD_HEIGHT;
                         rankSprite.x = x * CARD_WIDTH;
                         rankSprite.y = y * CARD_HEIGHT;
-                        this.container.addChild(rankSprite);
-                        this.container.addChild(suitSprite);
+                        this.playfield.addChild(rankSprite);
+                        this.playfield.addChild(suitSprite);
                         this.cells[x][y] = {
                             card: card,
                             backSprite: backSprite,
