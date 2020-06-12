@@ -66,6 +66,12 @@ export class Game {
         }
     }
 
+    ClaimHand(hand: {card: Card, x: number, y: number}[]): void {
+        hand.map((i) => {
+            this.cards[i.x][i.y] = null
+        })
+    }
+
     public cards: (Card | null)[][] = [];
 
     static GetHand(cards: Card[]): Hand {
