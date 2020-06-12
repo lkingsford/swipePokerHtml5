@@ -39,7 +39,7 @@ export const enum HandType {
 export interface Hand {
     valid: Boolean;
     handType?: HandType;
-    score?: Number;
+    score?: number;
 }
 
 export interface Card {
@@ -67,7 +67,8 @@ export class Game {
 
     ClaimHand(hand: { card: Card, x: number, y: number }[]): void {
         // TODO: Score hand
-        this._score += 10;
+        let h = Game.GetHand(hand.map((i) => i.card));
+        this._score += h.score!;
 
         if (hand[0].x == hand[1].x) {
             // Vertical
@@ -114,8 +115,7 @@ export class Game {
         // Replace cards
         for (let x = 0; x < Game.TABLE_WIDTH; ++x)
             for (let y = 0; y < Game.TABLE_HEIGHT; ++y) {
-                if (this.cards[x][y] == null)
-                {
+                if (this.cards[x][y] == null) {
                     this.cards[x][y] = { rank: randInt(0, 13), suit: randInt(0, 4) };
                 }
             }
@@ -127,7 +127,99 @@ export class Game {
         if (cards.length != 5) {
             return { valid: false };
         }
-        return { valid: true };
+
+        let isFlush = Game.IsFlush(cards);
+        let isStraight = Game.IsStraight(cards);
+        let highestRank = cards.map((i) => i.rank).sort((a, b) => {
+            let a1 = a == 0 ? 14 : a;
+            let b1 = b == 0 ? 14 : a;
+            return a1 - b1;
+        })[4]
+
+        let hand = { valid: false }
+        let qOfRank = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].map((rank) => cards.filter((card) => card.rank == rank).length)
+        if (max(qOfRank) == 5) {
+            return {
+                handType: HandType._5OfAKind,
+                score: 500,
+                valid: true
+            }
+        } else if (isFlush && isStraight && highestRank == Rank.A) {
+            return {
+                handType: HandType.RoyalFlush,
+                score: 250,
+                valid: true
+            };
+        } else if (isFlush && isStraight) {
+            return {
+                handType: HandType.StraightFlush,
+                score: 250,
+                valid: true
+            };
+        } else if (max(qOfRank) == 4) {
+            return {
+                handType: HandType._4OfAKind,
+                score: 250,
+                valid: true
+            };
+        } else if ((max(qOfRank) == 3) && (min(qOfRank.filter((i) => i > 0))) == 2) {
+            return {
+                handType: HandType.FullHouse,
+                score: 250,
+                valid: true
+            };
+        } else if (isFlush) {
+            return {
+                handType: HandType.Flush,
+                score: 250,
+                valid: true
+            };
+        } else if (isStraight) {
+            return {
+                handType: HandType.Straight,
+                score: 250,
+                valid: true
+            };
+        } else if (max(qOfRank) == 3) {
+            return {
+                handType: HandType._3OfAKind,
+                score: 250,
+                valid: true
+            };
+        } else if ((qOfRank.filter((i) => i == 2).length) == 2) {
+            return {
+                handType: HandType._2Pair,
+                score: 250,
+                valid: true
+            };
+        } else if (max(qOfRank) == 2) {
+            return {
+                handType: HandType.Pair,
+                score: 250,
+                valid: true
+            };
+        }
+        return hand;
+    }
+
+    private static IsFlush(cards: Card[]): boolean {
+        return cards[0].suit == cards[1].suit &&
+            cards[0].suit == cards[2].suit &&
+            cards[0].suit == cards[3].suit &&
+            cards[0].suit == cards[4].suit;
+    }
+
+    private static IsStraight(cards: Card[]): boolean {
+        let ranked = cards.sort((a, b) => a.rank - b.rank);
+        // 2 cases - in order, or A 10 (for 10-J-Q-K-A flush)
+        var lastRank = ranked[0].rank;
+        for (let i = 1; i < 5; ++i) {
+            if (!(((lastRank + 1) == ranked[i].rank) || ((lastRank == Rank.A) && (ranked[i].rank == Rank._10)))) {
+                return false;
+            }
+            lastRank = ranked[i].rank;
+        }
+        return true;
     }
 
     private _score: number = 0;
