@@ -49,12 +49,87 @@ export class GameState extends State {
         return selected
     }
 
+
+    setAvailable(): void {
+        let selected = this.getSelected();
+        if (selected.length == 5) {
+            for (let x = 0; x < Game.TABLE_WIDTH; ++x)
+                for (let y = 0; y < Game.TABLE_HEIGHT; ++y) {
+                    let cell = this.cells[x][y]
+                    if (cell.selected == Back.Available) {
+                        this.setCellSelected(cell, Back.Unavailable);
+                    }
+                }
+        } else if (selected.length == 0) {
+            this.unselectAll();
+        } else if (selected.length == 1) {
+            // Clear all
+            for (let x = 0; x < Game.TABLE_WIDTH; ++x)
+                for (let y = 0; y < Game.TABLE_HEIGHT; ++y) {
+                    let cell = this.cells[x][y]
+                    if (cell.selected == Back.Available) {
+                        this.setCellSelected(cell, Back.Unavailable);
+                    }
+                }
+            // Allow all surrounding cells
+            let cell = selected[0]
+            if (cell.x > 0)
+                this.setCellSelected(this.cells[cell.x - 1][cell.y], Back.Available)
+            if (cell.x < (Game.TABLE_WIDTH - 1))
+                this.setCellSelected(this.cells[cell.x + 1][cell.y], Back.Available)
+            if (cell.y > 0)
+                this.setCellSelected(this.cells[cell.x][cell.y - 1], Back.Available)
+            if (cell.y < (Game.TABLE_HEIGHT - 1))
+                this.setCellSelected(this.cells[cell.x][cell.y + 1], Back.Available)
+        } else if (selected.length > 1) {
+            // Clear all
+            for (let x = 0; x < Game.TABLE_WIDTH; ++x)
+                for (let y = 0; y < Game.TABLE_HEIGHT; ++y) {
+                    let cell = this.cells[x][y]
+                    if (cell.selected == Back.Available) {
+                        this.setCellSelected(cell, Back.Unavailable);
+                    }
+                }
+            // Surrounding vertical or horizontal cells
+            if (selected[0].x == selected[1].x) {
+                // Vertical
+                let yMin = Game.TABLE_HEIGHT + 1;
+                let yMax = -1;
+                selected.forEach((i) => {
+                    if (i.y < yMin)
+                        yMin = i.y;
+                    if (i.y > yMax)
+                        yMax = i.y;
+                })
+                if (yMin > 0)
+                    this.setCellSelected(this.cells[selected[0].x][yMin - 1], Back.Available)
+                if (yMax < (Game.TABLE_HEIGHT - 1))
+                    this.setCellSelected(this.cells[selected[0].x][yMax + 1], Back.Available)
+            } else {
+                // Horizontal
+                let xMin = Game.TABLE_WIDTH + 1;
+                let xMax = -1;
+                selected.forEach((i) => {
+                    if (i.x < xMin)
+                        xMin = i.x;
+                    if (i.x > xMax)
+                        xMax = i.x;
+                })
+                if (xMin > 0)
+                    this.setCellSelected(this.cells[xMin - 1][selected[0].y], Back.Available)
+                if (xMax < (Game.TABLE_WIDTH - 1))
+                    this.setCellSelected(this.cells[xMax + 1][selected[0].y], Back.Available)
+            }
+        }
+    }
+
     tapCell(cell: Cell): void {
         switch (cell.selected) {
             case Back.Available:
                 {
                     this.setCellSelected(cell, Back.Selected);
                     let selected = this.getSelected();
+                    this.setAvailable();
                     if (selected.length == 5) {
                         let cards = selected.filter((i) => (i.card != null))
                             .map((i) => i.card!)
@@ -81,6 +156,7 @@ export class GameState extends State {
                 {
                     let selected = this.getSelected()
                     this.game?.ClaimHand(selected.map((i) => { return { card: i.card!, x: i.x, y: i.y } }));
+                    this.unselectAll();
                 }
                 break;
         }
