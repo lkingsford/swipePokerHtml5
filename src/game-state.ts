@@ -2,7 +2,7 @@ import { strict as assert } from 'assert'
 import * as PIXI from 'pixi.js'
 import { Game, Card, Suit } from './game'
 import { State } from './state'
-import { EvalSourceMapDevToolPlugin } from 'webpack';
+import { min, max } from './better-minmax'
 
 const CARD_WIDTH = 60;
 const CARD_HEIGHT = 48;
@@ -93,28 +93,16 @@ export class GameState extends State {
             // Surrounding vertical or horizontal cells
             if (selected[0].x == selected[1].x) {
                 // Vertical
-                let yMin = Game.TABLE_HEIGHT + 1;
-                let yMax = -1;
-                selected.forEach((i) => {
-                    if (i.y < yMin)
-                        yMin = i.y;
-                    if (i.y > yMax)
-                        yMax = i.y;
-                })
+                let yMin = min(selected.map((i) => i.y));
+                let yMax = max(selected.map((i) => i.y));
                 if (yMin > 0)
                     this.setCellSelected(this.cells[selected[0].x][yMin - 1], Back.Available)
                 if (yMax < (Game.TABLE_HEIGHT - 1))
                     this.setCellSelected(this.cells[selected[0].x][yMax + 1], Back.Available)
             } else {
                 // Horizontal
-                let xMin = Game.TABLE_WIDTH + 1;
-                let xMax = -1;
-                selected.forEach((i) => {
-                    if (i.x < xMin)
-                        xMin = i.x;
-                    if (i.x > xMax)
-                        xMax = i.x;
-                })
+                let xMin = min(selected.map((i) => i.x));
+                let xMax = max(selected.map((i) => i.x));
                 if (xMin > 0)
                     this.setCellSelected(this.cells[xMin - 1][selected[0].y], Back.Available)
                 if (xMax < (Game.TABLE_WIDTH - 1))
