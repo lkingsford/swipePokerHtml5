@@ -35,6 +35,7 @@ export class GameState extends State {
         if (GameState.rankTextures == undefined) {
             console.warn("getTextures should be called before Game is constructed");
         }
+        this.updateScore();
     }
 
     getSelected(): Cell[] {
@@ -48,7 +49,6 @@ export class GameState extends State {
             }
         return selected
     }
-
 
     setAvailable(): void {
         let selected = this.getSelected();
@@ -225,9 +225,33 @@ export class GameState extends State {
             }
     }
 
+    lastScore: string = "-1";
+    scoreText: PIXI.Text | null = null;
+    updateScore(): void {
+        let score = `${(this.game?.score ?? 0)}`;
+        if (score == this.lastScore)
+        {
+            return;
+        }
+        if (this.scoreText != null)
+        {
+            this.container.removeChild(this.scoreText!);
+        }
+        this.scoreText = new PIXI.Text(`${score}`, {
+            align: 'center',
+            tint: 0xFF0000,
+        });
+        this.scoreText.x = 720 / 2 - this.scoreText.width;
+        this.scoreText.y = 850;
+
+        this.container.addChild(this.scoreText)
+        this.lastScore = score;
+    }
+
     onLoop(delta: number): boolean {
         // Render
         this.updateCells();
+        this.updateScore();
         return true;
     }
 
@@ -254,12 +278,14 @@ export class GameState extends State {
     static addResources(loader: PIXI.Loader) {
         loader.add("cards_texture", "assets/Cards.png");
         loader.add("hands_texture", "assets/Hands.png");
+        loader.add("score_font", "assets/ScoreFont.fnt");
     }
 
     static rankTextures: { [index: number]: PIXI.Texture };
     static suitTextures: { [index: number]: PIXI.Texture };
     static backTextures: { [index: number]: PIXI.Texture };
     static handTextures: { [index: number]: PIXI.Texture };
+
     static getTextures(resources: { [index: string]: PIXI.LoaderResource }) {
         GameState.suitTextures = {};
         for (let i = 0; i < 4; i++) {
