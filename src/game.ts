@@ -45,7 +45,29 @@ export interface Card {
     rank: Rank;
 }
 
+function randInt(min: number, max: number): number {
+    return Math.floor(Math.random() * max) + min;
+}
+
 export class Game {
+    public static readonly TABLE_WIDTH = 8;
+    public static readonly TABLE_HEIGHT = 8;
+
+    StartGame(): void {
+        // Lay cards
+        this.cards = []
+        for (let x = 0; x < Game.TABLE_WIDTH; ++x)
+        {
+            this.cards[x] = []
+            for (let y = 0; y < Game.TABLE_HEIGHT; ++y)
+            {
+                this.cards[x][y] = {suit: randInt(0, 4), rank: randInt(0, 13)}
+            }
+        }
+    }
+
+    public cards: (Card | null)[][] = [];
+
     static GetHand(cards: Card[]): Hand {
         if (cards.length != 5) {
             return {valid: false};
