@@ -8,19 +8,6 @@ const sprites: { [key: string]: PIXI.Texture } = {};
 
 document.body.appendChild(app.view);
 
-/*
-window.addEventListener("resize", resize)
-window.addEventListener("mozfullscreenchange", ()=>{console.log("Mozfullscreenchange");})
-window.addEventListener("fullscreenchange", ()=>{console.log("fullscreenchange");})
-window.addEventListener("webkitfullscreenchange", ()=>{console.log("webkitfullscreenchange");})
-window.addEventListener("msfullscreenchange", ()=>{console.log("msfullscreenchange");})
-
-function resize(ev: Event) {
-  let target = ev.target as Window
-  console.log(target.innerWidth, target.outerWidth)
-}
-*/
-
 const loader: PIXI.Loader = PIXI.Loader.shared;
 GameState.addResources(loader)
 Title.addResources(loader)
