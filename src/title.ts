@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js'
 import * as State from './state'
-import { Game } from './game'
+import { GameState } from './game-state'
 
 export class Title extends State.State {
     constructor (app: PIXI.Application, resources: { [index: string]: PIXI.LoaderResource }) {
@@ -28,7 +28,12 @@ export class Title extends State.State {
     }
 
     startGame(): void {
-        let gameState = new Game(this.app, this.resources);
+        let gameState = new GameState(this.app, this.resources);
         super.setState(gameState);
+    }
+
+    static addResources(loader: PIXI.Loader):  void
+    {
+        loader.add("title_texture", "assets/Title.png");
     }
 }
