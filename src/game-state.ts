@@ -22,7 +22,7 @@ interface Cell {
 }
 
 interface Animation {
-    onLoop: {(delta: number): boolean};
+    onLoop: { (delta: number): boolean };
 }
 
 const enum Back {
@@ -40,7 +40,7 @@ class HandAnimation implements Animation {
     constructor(container: PIXI.Container, hand: HandType) {
         this.sprite = new PIXI.Sprite(GameState.handTextures[hand]);
         this.sprite.anchor = new PIXI.Point(0.5, 0.5);
-        this.sprite.x =  GAME_WIDTH / 2 ;
+        this.sprite.x = GAME_WIDTH / 2;
         this.sprite.y = GAME_HEIGHT / 2;
         container.addChild(this.sprite);
         this.container = container;
@@ -56,8 +56,7 @@ class HandAnimation implements Animation {
         let scale = this.t * 8;
         this.sprite.scale = new PIXI.Point(scale, scale)
         this.sprite.alpha = 1 - (this.t * .5)
-        if (this.t > 4)
-        {
+        if (this.t > 4) {
             this.container.removeChild(this.sprite);
             return false;
         }
@@ -106,8 +105,7 @@ export class GameState extends State {
                 }
         } else if (selected.length == 0) {
             this.unselectAll();
-        } else if (selected.length == 1) {
-            // Clear all
+        } else {
             for (let x = 0; x < Game.TABLE_WIDTH; ++x)
                 for (let y = 0; y < Game.TABLE_HEIGHT; ++y) {
                     let cell = this.cells[x][y]
@@ -115,43 +113,16 @@ export class GameState extends State {
                         this.setCellSelected(cell, Back.Unavailable);
                     }
                 }
-            // Allow all surrounding cells
-            let cell = selected[0]
-            if (cell.x > 0)
-                this.setCellSelected(this.cells[cell.x - 1][cell.y], Back.Available)
-            if (cell.x < (Game.TABLE_WIDTH - 1))
-                this.setCellSelected(this.cells[cell.x + 1][cell.y], Back.Available)
-            if (cell.y > 0)
-                this.setCellSelected(this.cells[cell.x][cell.y - 1], Back.Available)
-            if (cell.y < (Game.TABLE_HEIGHT - 1))
-                this.setCellSelected(this.cells[cell.x][cell.y + 1], Back.Available)
-        } else if (selected.length > 1) {
-            // Clear all
-            for (let x = 0; x < Game.TABLE_WIDTH; ++x)
-                for (let y = 0; y < Game.TABLE_HEIGHT; ++y) {
-                    let cell = this.cells[x][y]
-                    if (cell.selected == Back.Available) {
-                        this.setCellSelected(cell, Back.Unavailable);
+            selected.forEach( (i) => {
+                for(let ix = Math.max(i.x - 1, 0); ix <= Math.min(i.x + 1, Game.TABLE_WIDTH); ++ ix) {
+                    for(let iy = Math.max(i.y - 1, 0); iy <= Math.min(i.y + 1, Game.TABLE_WIDTH); ++ iy) {
+                        let cell = this.cells[ix][iy]
+                        if (cell.selected == Back.Unavailable || cell.selected == Back.Available) {
+                            this.setCellSelected(cell, Back.Available);
+                        }
                     }
                 }
-            // Surrounding vertical or horizontal cells
-            if (selected[0].x == selected[1].x) {
-                // Vertical
-                let yMin = min(selected.map((i) => i.y));
-                let yMax = max(selected.map((i) => i.y));
-                if (yMin > 0)
-                    this.setCellSelected(this.cells[selected[0].x][yMin - 1], Back.Available)
-                if (yMax < (Game.TABLE_HEIGHT - 1))
-                    this.setCellSelected(this.cells[selected[0].x][yMax + 1], Back.Available)
-            } else {
-                // Horizontal
-                let xMin = min(selected.map((i) => i.x));
-                let xMax = max(selected.map((i) => i.x));
-                if (xMin > 0)
-                    this.setCellSelected(this.cells[xMin - 1][selected[0].y], Back.Available)
-                if (xMax < (Game.TABLE_WIDTH - 1))
-                    this.setCellSelected(this.cells[xMax + 1][selected[0].y], Back.Available)
-            }
+            })
         }
     }
 
@@ -184,6 +155,9 @@ export class GameState extends State {
             case Back.Unavailable:
                 this.unselectAll();
                 break;
+            case Back.None:
+                this.unselectAll();
+                break;
             case Back.Ready:
                 {
                     let selected = this.getSelected()
@@ -194,25 +168,20 @@ export class GameState extends State {
         }
     }
 
-    setCellSelected(cell: Cell, value: Back): PIXI.Sprite | null {
+    setCellSelected(cell: Cell, value: Back): PIXI.Sprite {
         let x = cell.x;
         let y = cell.y;
         cell.selected = value;
         if (this.cells[x][y].backSprite)
             this.playfield.removeChild(cell.backSprite!);
-        if (value != Back.None) {
-            let backSprite = new PIXI.Sprite(GameState.backTextures[value]);
-            backSprite.x = x * CARD_WIDTH;
-            backSprite.y = y * CARD_HEIGHT;
-            cell.backSprite = backSprite;
-            backSprite.interactive = true;
-            backSprite.on("pointerdown", () => this.tapCell(this.cells[x][y]))
-            this.playfield.addChildAt(cell.backSprite, 0);
-            return backSprite;
-        }
-        else {
-            return null;
-        }
+        let backSprite = new PIXI.Sprite(GameState.backTextures[value]);
+        backSprite.x = x * CARD_WIDTH;
+        backSprite.y = y * CARD_HEIGHT;
+        cell.backSprite = backSprite;
+        backSprite.interactive = true;
+        backSprite.on("pointerdown", () => this.tapCell(this.cells[x][y]))
+        this.playfield.addChildAt(cell.backSprite, 0);
+        return backSprite;
     }
 
     unselectAll(): void {
@@ -222,7 +191,7 @@ export class GameState extends State {
                 if (cell.card) {
                     this.setCellSelected(cell, Back.Available)
                 } else {
-                    this.setCellSelected(cell, Back.Invalid)
+                    this.setCellSelected(cell, Back.None)
                 }
             }
     }
@@ -258,9 +227,11 @@ export class GameState extends State {
                         }
                     }
                     else {
+                        let backSprite = this.setCellSelected(this.cells[x][y], Back.None);
                         this.cells[x][y] = {
                             card: card!,
-                            selected: Back.Unavailable,
+                            selected: Back.None,
+                            backSprite: backSprite,
                             x: x,
                             y: y
                         }
@@ -273,12 +244,10 @@ export class GameState extends State {
     scoreText: PIXI.Text | null = null;
     updateScore(): void {
         let score = `${(this.game?.score ?? 0)}`;
-        if (score == this.lastScore)
-        {
+        if (score == this.lastScore) {
             return;
         }
-        if (this.scoreText != null)
-        {
+        if (this.scoreText != null) {
             this.container.removeChild(this.scoreText!);
         }
         this.scoreText = new PIXI.Text(`${score}`, {
@@ -324,7 +293,7 @@ export class GameState extends State {
     }
 
     gameEvent(event: GameEvent): void {
-        switch(event.event) {
+        switch (event.event) {
             case GameEventType.Hand:
                 this.triggerHandAnimation(event.hand!)
                 break;
@@ -371,7 +340,7 @@ export class GameState extends State {
         };
 
         GameState.backTextures = {};
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 6; i++) {
             let width = CARD_WIDTH;
             let height = CARD_HEIGHT;
             let srcX = (2 + i) * width;
