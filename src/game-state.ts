@@ -1,6 +1,6 @@
 import { strict as assert } from 'assert'
 import * as PIXI from 'pixi.js'
-import { Game, Card, Suit } from './game'
+import { Hand, HandType, Game, Card, Suit, GameEvent, GameEventType } from './game'
 import { State } from './state'
 import { min, max } from './better-minmax'
 
@@ -8,6 +8,8 @@ const CARD_WIDTH = 60;
 const CARD_HEIGHT = 48;
 const HAND_WIDTH = 256;
 const HAND_HEIGHT = 256;
+const GAME_WIDTH = 720;
+const GAME_HEIGHT = 960;
 
 interface Cell {
     backSprite?: PIXI.Sprite | null;
@@ -19,6 +21,10 @@ interface Cell {
     y: number;
 }
 
+interface Animation {
+    onLoop: {(delta: number): boolean};
+}
+
 const enum Back {
     Unavailable = 0,
     Available,
@@ -26,6 +32,37 @@ const enum Back {
     Ready,
     Invalid,
     None
+}
+
+class HandAnimation implements Animation {
+    // This is paired closer to GameState than I'd prefer
+
+    constructor(container: PIXI.Container, hand: HandType) {
+        this.sprite = new PIXI.Sprite(GameState.handTextures[hand]);
+        this.sprite.anchor = new PIXI.Point(0.5, 0.5);
+        this.sprite.x =  GAME_WIDTH / 2 ;
+        this.sprite.y = GAME_HEIGHT / 2;
+        container.addChild(this.sprite);
+        this.container = container;
+        this.t = 0;
+    }
+
+    container: PIXI.Container;
+    sprite: PIXI.Sprite;
+    t: number;
+
+    onLoop(delta: number): boolean {
+        this.t += delta;
+        let scale = this.t * 8;
+        this.sprite.scale = new PIXI.Point(scale, scale)
+        this.sprite.alpha = 1 - (this.t * .5)
+        if (this.t > 4)
+        {
+            this.container.removeChild(this.sprite);
+            return false;
+        }
+        return true;
+    }
 }
 
 export class GameState extends State {
@@ -259,14 +296,19 @@ export class GameState extends State {
         // Render
         this.updateCells();
         this.updateScore();
+        let animations = this.animations;
+        animations.forEach((i): void => {
+            let stillRunning = i.onLoop(delta);
+            if (!stillRunning) {
+                this.animations.splice(this.animations.indexOf(i), 1);
+            }
+        })
         return true;
     }
 
     onStart(): void {
         this.startNewGame();
     }
-
-    game: Game | null = null;
 
     startNewGame(): void {
         this.game = new Game();
@@ -278,8 +320,24 @@ export class GameState extends State {
                 this.cells[x][y] = { card: null, selected: Back.Unavailable, x: x, y: y }
             }
         }
+        this.game.OnGameEvent = (i) => this.gameEvent(i);
     }
 
+    gameEvent(event: GameEvent): void {
+        switch(event.event) {
+            case GameEventType.Hand:
+                this.triggerHandAnimation(event.hand!)
+                break;
+        }
+    }
+
+    triggerHandAnimation(hand: Hand): void {
+        let handAnimation = new HandAnimation(this.container, hand.handType!)
+        this.animations.push(handAnimation)
+    }
+
+    animations: Animation[] = [];
+    game: Game | null = null;
     cells: Cell[][] = [];
 
     static addResources(loader: PIXI.Loader) {
@@ -288,10 +346,10 @@ export class GameState extends State {
         loader.add("score_font", "assets/ScoreFont.fnt");
     }
 
-    static rankTextures: { [index: number]: PIXI.Texture };
-    static suitTextures: { [index: number]: PIXI.Texture };
-    static backTextures: { [index: number]: PIXI.Texture };
-    static handTextures: { [index: number]: PIXI.Texture };
+    public static rankTextures: { [index: number]: PIXI.Texture };
+    public static suitTextures: { [index: number]: PIXI.Texture };
+    public static backTextures: { [index: number]: PIXI.Texture };
+    public static handTextures: { [index: number]: PIXI.Texture };
 
     static getTextures(resources: { [index: string]: PIXI.LoaderResource }) {
         GameState.suitTextures = {};
@@ -301,7 +359,7 @@ export class GameState extends State {
             let srcX = i * width;
             let srcY = 0;
             GameState.suitTextures[i] = new PIXI.Texture(resources["cards_texture"].texture.baseTexture as PIXI.BaseTexture, new PIXI.Rectangle(srcX, srcY, width, height));
-        }
+        };
 
         GameState.rankTextures = {};
         for (let i = 0; i < 26; i++) {
@@ -310,7 +368,7 @@ export class GameState extends State {
             let srcX = (i % 13) * width;
             let srcY = (1 + Math.floor(i / 13)) * height;
             GameState.rankTextures[i] = new PIXI.Texture(resources["cards_texture"].texture.baseTexture as PIXI.BaseTexture, new PIXI.Rectangle(srcX, srcY, width, height));
-        }
+        };
 
         GameState.backTextures = {};
         for (let i = 0; i < 5; i++) {
@@ -319,6 +377,15 @@ export class GameState extends State {
             let srcX = (2 + i) * width;
             let srcY = 0;
             GameState.backTextures[i] = new PIXI.Texture(resources["cards_texture"].texture.baseTexture as PIXI.BaseTexture, new PIXI.Rectangle(srcX, srcY, width, height));
-        }
+        };
+
+        GameState.handTextures = {};
+        for (let i = 0; i < 10; i++) {
+            let width = HAND_WIDTH;
+            let height = HAND_HEIGHT;
+            let srcX = (i % 4) * width;
+            let srcY = Math.floor(i / 4) * height;
+            GameState.handTextures[i] = new PIXI.Texture(resources["hands_texture"].texture.baseTexture as PIXI.BaseTexture, new PIXI.Rectangle(srcX, srcY, width, height));
+        };
     }
 }

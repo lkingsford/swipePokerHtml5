@@ -17,7 +17,7 @@ let titleState: Title;
 function start_loop(app: PIXI.Application, resources: { [index: string]: PIXI.LoaderResource }): void {
   titleState = new Title(app, resources);
   titleState.start();
-  app.ticker.add((delta: number) => update(delta))
+  app.ticker.add((delta: number) => update(delta / 60))
   app.ticker.start()
 }
 

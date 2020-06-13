@@ -36,6 +36,16 @@ export const enum HandType {
     Pair
 }
 
+export const enum GameEventType {
+    Hand = 0,
+    ScoreChange
+}
+
+export interface GameEvent {
+    event: GameEventType;
+    hand?: Hand;
+}
+
 export interface Hand {
     valid: Boolean;
     handType?: HandType;
@@ -119,6 +129,8 @@ export class Game {
                     this.cards[x][y] = { rank: randInt(0, 13), suit: randInt(0, 4) };
                 }
             }
+
+        this.OnGameEvent({event: GameEventType.Hand, hand: h});
     }
 
     public cards: (Card | null)[][] = [];
@@ -217,6 +229,8 @@ export class Game {
         }
         return hand;
     }
+
+    public OnGameEvent: {(event: GameEvent): void} = ()=>{};
 
     private static IsFlush(cards: Card[]): boolean {
         return cards[0].suit == cards[1].suit &&
