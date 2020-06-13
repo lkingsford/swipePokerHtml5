@@ -113,9 +113,9 @@ export class GameState extends State {
                         this.setCellSelected(cell, Back.Unavailable);
                     }
                 }
-            selected.forEach( (i) => {
-                for(let ix = Math.max(i.x - 1, 0); ix <= Math.min(i.x + 1, Game.TABLE_WIDTH); ++ ix) {
-                    for(let iy = Math.max(i.y - 1, 0); iy <= Math.min(i.y + 1, Game.TABLE_WIDTH); ++ iy) {
+            selected.forEach((i) => {
+                for (let ix = Math.max(i.x - 1, 0); ix <= Math.min(i.x + 1, Game.TABLE_WIDTH); ++ix) {
+                    for (let iy = Math.max(i.y - 1, 0); iy <= Math.min(i.y + 1, Game.TABLE_WIDTH); ++iy) {
                         let cell = this.cells[ix][iy]
                         if (cell.selected == Back.Unavailable || cell.selected == Back.Available) {
                             this.setCellSelected(cell, Back.Available);
@@ -136,12 +136,15 @@ export class GameState extends State {
                     if (selected.length == 5) {
                         let cards = selected.filter((i) => (i.card != null))
                             .map((i) => i.card!)
-                        let hasHand = Game.GetHand(cards).valid;
+                        let hand = Game.GetHand(cards);
                         for (let x = 0; x < Game.TABLE_WIDTH; ++x)
                             for (let y = 0; y < Game.TABLE_HEIGHT; ++y) {
                                 let cell = this.cells[x][y]
                                 if (cell.selected == Back.Selected)
-                                    this.setCellSelected(cell, hasHand ? Back.Ready : Back.Invalid)
+                                    this.setCellSelected(cell, hand.valid ? Back.Ready : Back.Invalid)
+                                if (hand.valid) {
+                                    this.updateProvisionalScore(`(${hand.score} - ${hand.newCards} new cards)`);
+                                }
                             }
                     }
                 }
@@ -242,6 +245,7 @@ export class GameState extends State {
 
     lastScore: string = "-1";
     scoreText: PIXI.Text | null = null;
+
     updateScore(): void {
         let score = `${(this.game?.score ?? 0)}`;
         if (score == this.lastScore) {
@@ -250,6 +254,7 @@ export class GameState extends State {
         if (this.scoreText != null) {
             this.container.removeChild(this.scoreText!);
         }
+        this.updateProvisionalScore(null)
         this.scoreText = new PIXI.Text(`${score}`, {
             align: 'center',
             tint: 0xFF0000,
@@ -260,6 +265,23 @@ export class GameState extends State {
         this.container.addChild(this.scoreText)
         this.lastScore = score;
     }
+
+    provisionalScoreText: PIXI.Text | null = null
+
+    updateProvisionalScore(score: string | null): void {
+        if (this.provisionalScoreText != null) {
+            this.container.removeChild(this.provisionalScoreText)
+        }
+        if (score != null) {
+        this.provisionalScoreText = new PIXI.Text(score!, {
+            align: 'center'
+        });
+            this.provisionalScoreText.x = 720 / 2 - this.provisionalScoreText.width;
+            this.provisionalScoreText.y = 800;
+            this.container.addChild(this.provisionalScoreText)
+        }
+    }
+
 
     onLoop(delta: number): boolean {
         // Render
