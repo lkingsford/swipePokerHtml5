@@ -61,8 +61,8 @@ function randInt(min: number, max: number): number {
     return Math.floor(Math.random() * max) + min;
 }
 export class Game {
-    public static readonly TABLE_WIDTH = 8;
-    public static readonly TABLE_HEIGHT = 8;
+    public static readonly TABLE_WIDTH = 10;
+    public static readonly TABLE_HEIGHT = 12;
 
     StartGame(): void {
         // Lay cards
@@ -80,53 +80,17 @@ export class Game {
         let h = Game.GetHand(hand.map((i) => i.card));
         this._score += h.score!;
 
-        if (hand[0].x == hand[1].x) {
-            // Vertical
-            let x = hand[0].x
-            let y0 = min(hand.map((i) => i.y))
-            let y5 = max(hand.map((i) => i.y))
-            for (let y = y0; y <= y5; ++y) {
-                if (x < Game.TABLE_WIDTH / 2) {
-                    // Left Side
-                    for (let copyToX = x; copyToX > 0; --copyToX) {
-                        this.cards[copyToX][y] = this.cards[copyToX - 1][y];
-                    }
-                    this.cards[0][y] = null;
-                } else {
-                    // Right side
-                    for (let copyToX = x; copyToX < (Game.TABLE_WIDTH - 1); ++copyToX) {
-                        this.cards[copyToX][y] = this.cards[copyToX + 1][y];
-                    }
-                    this.cards[Game.TABLE_WIDTH - 1][y] = null;
-                }
-            }
-        } else {
-            // Horizontal
-            let y = hand[0].y
-            let x0 = min(hand.map((i) => i.x))
-            let x5 = max(hand.map((i) => i.x))
-            for (let x = x0; x <= x5; ++x) {
-                if (y < Game.TABLE_HEIGHT / 2) {
-                    // Top Side
-                    for (let copyToY = y; copyToY > 0; --copyToY) {
-                        this.cards[x][copyToY] = this.cards[x][copyToY - 1]
-                    }
-                    this.cards[x][0] = null;
-                } else {
-                    // Bottom side
-                    for (let copyToY = y; copyToY < (Game.TABLE_HEIGHT - 1); ++copyToY) {
-                        this.cards[x][copyToY] = this.cards[x][copyToY + 1];
-                    }
-                    this.cards[x][Game.TABLE_HEIGHT - 1] = null;
-                }
-            }
-        }
+        hand.forEach((i) => this.cards[i.x][i.y] = null)
 
-        // Replace cards
         for (let x = 0; x < Game.TABLE_WIDTH; ++x)
-            for (let y = 0; y < Game.TABLE_HEIGHT; ++y) {
-                if (this.cards[x][y] == null) {
-                    this.cards[x][y] = { rank: randInt(0, 13), suit: randInt(0, 4) };
+            for (let y = (Game.TABLE_HEIGHT - 1); y >= 0; --y) {
+                let checkY = y - 1;
+                while (this.cards[x][y] == null && checkY >= 0) {
+                    if (this.cards[x][checkY] != null) {
+                        this.cards[x][y] = this.cards[x][checkY];
+                        this.cards[x][checkY] = null;
+                    }
+                    checkY -= 1;
                 }
             }
 

@@ -74,9 +74,9 @@ export class GameState extends State {
         }
         this.playfield = new PIXI.Container();
         this.container.addChild(this.playfield);
-        this.playfield.scale = new PIXI.Point(1.25, 1.25);
-        this.playfield.x = 60;
-        this.playfield.y = 60;
+        this.playfield.scale = new PIXI.Point(1.2, 1.2);
+        this.playfield.x = 0;
+        this.playfield.y = 20;
         this.updateScore();
     }
 
