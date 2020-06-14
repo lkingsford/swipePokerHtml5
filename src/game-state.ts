@@ -108,7 +108,7 @@ export class GameState extends State {
                 }
         } else if (selected.length == 0) {
             this.unselectAll();
-        } else {
+        } else if (selected.length == 1) {
             for (let x = 0; x < Game.TABLE_WIDTH; ++x)
                 for (let y = 0; y < Game.TABLE_HEIGHT; ++y) {
                     let cell = this.cells[x][y]
@@ -116,19 +116,58 @@ export class GameState extends State {
                         cell.selected =Back.Unavailable;
                     }
                 }
-            selected.forEach((i) => {
-                for (let ix = Math.max(i.x - 1, 0); ix <= Math.min(i.x + 1, Game.TABLE_WIDTH - 1); ++ix) {
-                    for (let iy = Math.max(i.y - 1, 0); iy <= Math.min(i.y + 1, Game.TABLE_HEIGHT - 1); ++iy) {
+let selectedCell = selected[0]
+                for (let ix = Math.max(selectedCell.x - 1, 0); ix <= Math.min(selectedCell.x + 1, Game.TABLE_WIDTH - 1); ++ix) {
+                    for (let iy = Math.max(selectedCell.y - 1, 0); iy <= Math.min(selectedCell.y + 1, Game.TABLE_HEIGHT - 1); ++iy) {
                         let cell = this.cells[ix][iy]
                         if (cell.selected == Back.Unavailable || cell.selected == Back.Available) {
                             cell.selected = Back.Available;
                         }
                     }
                 }
-            })
             selected.forEach((i) => {
                 i.selected = Back.Selected;
             })
+        } else {
+                        // Surrounding vertical or horizontal cells
+            for (let x = 0; x < Game.TABLE_WIDTH; ++x)
+                for (let y = 0; y < Game.TABLE_HEIGHT; ++y) {
+                    let cell = this.cells[x][y]
+                    if (cell.selected == Back.Available) {
+                        cell.selected =Back.Unavailable;
+                    }
+                }
+                        let yMin = min(selected.map((i) => i.y));
+                        let yMax = max(selected.map((i) => i.y));
+                        let xMin = min(selected.map((i) => i.x));
+                        let xMax = max(selected.map((i) => i.x));
+                    
+                    if (selected[0].x == selected[1].x) {
+                        // Vertical
+                        if (yMin > 0)
+                            this.cells[selected[0].x][yMin - 1].selected = Back.Available;
+                        if (yMax < (Game.TABLE_HEIGHT - 1))
+                            this.cells[selected[0].x][yMax + 1].selected = Back.Available;
+                    } else if (selected[0].y == selected[1].y) {
+                        // Horizontal
+                        if (xMin > 0)
+                            this.cells[xMin - 1][selected[0].y].selected = Back.Available;
+                        if (xMax < (Game.TABLE_WIDTH - 1))
+                            this.cells[xMax + 1][selected[0].y].selected = Back.Available;
+                    } else if ((selected[0].x - selected[1].x) != (selected[0].y - selected[1].y)) {
+                        // '/' direction
+                        if (xMin > 0 && yMax < (Game.TABLE_HEIGHT - 1))
+                            this.cells[xMin - 1][yMax + 1].selected = Back.Available
+                        if (xMax < (Game.TABLE_WIDTH - 1) && (yMin > 0))
+                            this.cells[xMax + 1][yMin - 1].selected = Back.Available
+                    } else {
+                        // '\' direction
+                        if (yMax < (Game.TABLE_WIDTH - 1) && xMax < (Game.TABLE_WIDTH - 1))
+                            this.cells[xMax + 1][yMax + 1].selected = Back.Available
+                        if (yMin > 0 && (xMin > 0))
+                            this.cells[xMin - 1][yMin - 1].selected = Back.Available
+                    }
+
         }
     }
 
