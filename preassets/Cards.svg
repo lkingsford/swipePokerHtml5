@@ -9,9 +9,9 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="480"
+   width="540"
    height="144"
-   viewBox="0 0 126.99995 38.099998"
+   viewBox="0 0 142.87494 38.099998"
    version="1.1"
    id="svg8"
    sodipodi:docname="Cards.svg"
@@ -28,9 +28,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="5.6"
-     inkscape:cx="413.78081"
-     inkscape:cy="83.613082"
+     inkscape:zoom="2.8"
+     inkscape:cx="298.22171"
+     inkscape:cy="119.57651"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -43,8 +43,8 @@
      fit-margin-bottom="0"
      inkscape:window-width="1368"
      inkscape:window-height="821"
-     inkscape:window-x="733"
-     inkscape:window-y="411"
+     inkscape:window-x="970"
+     inkscape:window-y="434"
      inkscape:window-maximized="0"
      units="px">
     <sodipodi:guide
@@ -348,5 +348,23 @@
        y="259.13388"
        ry="0.95323128"
        rx="0.95323128" />
+    <rect
+       rx="0.95323128"
+       ry="0.95323128"
+       y="259.10828"
+       x="32.104046"
+       height="12.283461"
+       width="15.251957"
+       id="rect5173"
+       style="fill:#999999;fill-opacity:1;stroke:#000000;stroke-width:0.2559053;stroke-linecap:butt;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none" />
+    <rect
+       style="fill:#d7e3f4;fill-opacity:1;stroke:#0b1728;stroke-width:0.89426166;stroke-linecap:butt;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect5177"
+       width="14.737324"
+       height="11.123491"
+       x="127.58844"
+       y="259.68826"
+       ry="0.86321443"
+       rx="0.92106736" />
   </g>
 </svg>

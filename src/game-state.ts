@@ -31,7 +31,8 @@ const enum Back {
     Selected,
     Ready,
     Invalid,
-    None
+    None,
+    NewCard // Special - as sprite. Not to be set.
 }
 
 class HandAnimation implements Animation {
@@ -90,17 +91,19 @@ export class GameState extends State {
                     selected.push(cell)
                 }
             }
+        console.log("Get selected called and returned ", selected)
         return selected
     }
 
     setAvailable(): void {
+        console.log("Set Available Called")
         let selected = this.getSelected();
         if (selected.length == 5) {
             for (let x = 0; x < Game.TABLE_WIDTH; ++x)
                 for (let y = 0; y < Game.TABLE_HEIGHT; ++y) {
                     let cell = this.cells[x][y]
                     if (cell.selected == Back.Available) {
-                        this.setCellSelected(cell, Back.Unavailable);
+                        cell.selected = Back.Unavailable;
                     }
                 }
         } else if (selected.length == 0) {
@@ -110,27 +113,31 @@ export class GameState extends State {
                 for (let y = 0; y < Game.TABLE_HEIGHT; ++y) {
                     let cell = this.cells[x][y]
                     if (cell.selected == Back.Available) {
-                        this.setCellSelected(cell, Back.Unavailable);
+                        cell.selected =Back.Unavailable;
                     }
                 }
             selected.forEach((i) => {
-                for (let ix = Math.max(i.x - 1, 0); ix <= Math.min(i.x + 1, Game.TABLE_WIDTH); ++ix) {
-                    for (let iy = Math.max(i.y - 1, 0); iy <= Math.min(i.y + 1, Game.TABLE_WIDTH); ++iy) {
+                for (let ix = Math.max(i.x - 1, 0); ix <= Math.min(i.x + 1, Game.TABLE_WIDTH - 1); ++ix) {
+                    for (let iy = Math.max(i.y - 1, 0); iy <= Math.min(i.y + 1, Game.TABLE_HEIGHT - 1); ++iy) {
                         let cell = this.cells[ix][iy]
                         if (cell.selected == Back.Unavailable || cell.selected == Back.Available) {
-                            this.setCellSelected(cell, Back.Available);
+                            cell.selected = Back.Available;
                         }
                     }
                 }
+            })
+            selected.forEach((i) => {
+                i.selected = Back.Selected;
             })
         }
     }
 
     tapCell(cell: Cell): void {
+        console.log("Tap cell");
         switch (cell.selected) {
             case Back.Available:
                 {
-                    this.setCellSelected(cell, Back.Selected);
+                    cell.selected = Back.Selected;
                     let selected = this.getSelected();
                     this.setAvailable();
                     if (selected.length == 5) {
@@ -141,7 +148,7 @@ export class GameState extends State {
                             for (let y = 0; y < Game.TABLE_HEIGHT; ++y) {
                                 let cell = this.cells[x][y]
                                 if (cell.selected == Back.Selected)
-                                    this.setCellSelected(cell, hand.valid ? Back.Ready : Back.Invalid)
+                                    cell.selected = hand.valid ? Back.Ready : Back.Invalid
                                 if (hand.valid) {
                                     this.updateProvisionalScore(`(${hand.score} - ${hand.newCards} new cards)`);
                                 }
@@ -166,78 +173,86 @@ export class GameState extends State {
                     let selected = this.getSelected()
                     this.game?.ClaimHand(selected.map((i) => { return { card: i.card!, x: i.x, y: i.y } }));
                     this.unselectAll();
+                    this.updateScore();
                 }
                 break;
         }
+        this.updateCells();
     }
 
-    setCellSelected(cell: Cell, value: Back): PIXI.Sprite {
-        let x = cell.x;
-        let y = cell.y;
-        cell.selected = value;
-        if (this.cells[x][y].backSprite)
-            this.playfield.removeChild(cell.backSprite!);
-        let backSprite = new PIXI.Sprite(GameState.backTextures[value]);
+    getCellSelectedBacksprite(selectedState: Back, newCard: boolean, x: number, y: number): PIXI.Sprite {
+        let backSprite: PIXI.Sprite;
+        if (newCard && selectedState == Back.Available) {
+            backSprite = new PIXI.Sprite(GameState.backTextures[Back.NewCard])
+        } else {
+            backSprite = new PIXI.Sprite(GameState.backTextures[selectedState]);
+        }
         backSprite.x = x * CARD_WIDTH;
         backSprite.y = y * CARD_HEIGHT;
-        cell.backSprite = backSprite;
         backSprite.interactive = true;
         backSprite.on("pointerdown", () => this.tapCell(this.cells[x][y]))
-        this.playfield.addChildAt(cell.backSprite, 0);
+        this.playfield.addChildAt(backSprite, 0);
         return backSprite;
     }
 
     unselectAll(): void {
+        console.log("Unselect all called")
         for (let x = 0; x < Game.TABLE_WIDTH; ++x)
             for (let y = 0; y < Game.TABLE_HEIGHT; ++y) {
                 let cell = this.cells[x][y]
                 if (cell.card) {
-                    this.setCellSelected(cell, Back.Available)
+                    cell.selected = Back.Available;
                 } else {
-                    this.setCellSelected(cell, Back.None)
+                    cell.selected = Back.None;
                 }
             }
     }
 
     updateCells(): void {
+        console.log("Update cells called")
         for (let x = 0; x < Game.TABLE_WIDTH; ++x)
             for (let y = 0; y < Game.TABLE_HEIGHT; ++y) {
-                let card = this.game?.cards[x][y]
-                if (this.cells[x][y].card != card) {
-                    if (this.cells[x][y].rankSprite)
-                        this.playfield.removeChild(this.cells[x][y].rankSprite!);
-                    if (this.cells[x][y].suitSprite)
-                        this.playfield.removeChild(this.cells[x][y].suitSprite!);
-                    let backSprite = this.setCellSelected(this.cells[x][y], Back.Available)
-                    if (card) {
-                        let suitSprite = new PIXI.Sprite(GameState.suitTextures[card?.suit!]);
-                        let blackSuit = (card?.suit == Suit.Club || card?.suit == Suit.Spade);
-                        let rankSprite = new PIXI.Sprite(GameState.rankTextures[card?.rank! + (blackSuit ? 0 : 13)]);
-                        suitSprite.x = (x + 0.5) * CARD_WIDTH;
-                        suitSprite.y = y * CARD_HEIGHT;
-                        rankSprite.x = x * CARD_WIDTH;
-                        rankSprite.y = y * CARD_HEIGHT;
-                        this.playfield.addChild(rankSprite);
-                        this.playfield.addChild(suitSprite);
-                        this.cells[x][y] = {
-                            card: card,
-                            backSprite: backSprite,
-                            suitSprite: suitSprite,
-                            rankSprite: rankSprite,
-                            selected: Back.Available,
-                            x: x,
-                            y: y
-                        }
+                if (this.cells[x][y].rankSprite)
+                    this.playfield.removeChild(this.cells[x][y].rankSprite!);
+                if (this.cells[x][y].suitSprite)
+                    this.playfield.removeChild(this.cells[x][y].suitSprite!);
+                if (this.cells[x][y].backSprite)
+                    this.playfield.removeChild(this.cells[x][y].backSprite!);
+                let card = this.game!.cards[x][y]
+                if (this.game!.cards[x][y] != null) {
+                    let suitSprite = new PIXI.Sprite(GameState.suitTextures[card?.suit!]);
+                    let blackSuit = (card?.suit == Suit.Club || card?.suit == Suit.Spade);
+                    let rankSprite = new PIXI.Sprite(GameState.rankTextures[card?.rank! + (blackSuit ? 0 : 13)]);
+                    suitSprite.x = (x + 0.5) * CARD_WIDTH;
+                    suitSprite.y = y * CARD_HEIGHT;
+                    rankSprite.x = x * CARD_WIDTH;
+                    rankSprite.y = y * CARD_HEIGHT;
+                    this.playfield.addChild(rankSprite);
+                    this.playfield.addChild(suitSprite);
+                    let selected = this.cells[x][y].selected;
+                    if (selected == Back.None) {
+                        selected = Back.Available;
                     }
-                    else {
-                        let backSprite = this.setCellSelected(this.cells[x][y], Back.None);
-                        this.cells[x][y] = {
-                            card: card!,
-                            selected: Back.None,
-                            backSprite: backSprite,
-                            x: x,
-                            y: y
-                        }
+                    let backSprite = this.getCellSelectedBacksprite(selected, card?.newCard ?? false, x, y)
+                    this.cells[x][y] = {
+                        card: card,
+                        backSprite: backSprite,
+                        suitSprite: suitSprite,
+                        rankSprite: rankSprite,
+                        selected: selected,
+                        x: x,
+                        y: y
+                    }
+                }
+                else {
+                    this.cells[x][y] = Back.None;
+                    let backSprite = this.getCellSelectedBacksprite(Back.None, false, x, y)
+                    this.cells[x][y] = {
+                        card: card!,
+                        selected: Back.None,
+                        backSprite: backSprite,
+                        x: x,
+                        y: y
                     }
                 }
             }
@@ -256,10 +271,10 @@ export class GameState extends State {
         }
         this.updateProvisionalScore(null)
         this.scoreText = new PIXI.Text(`${score}`, {
-            align: 'center',
+            align: 'left',
             tint: 0xFF0000,
         });
-        this.scoreText.x = 720 / 2 - this.scoreText.width;
+        this.scoreText.x = (720 - this.scoreText.width) / 2;
         this.scoreText.y = 850;
 
         this.container.addChild(this.scoreText)
@@ -273,10 +288,10 @@ export class GameState extends State {
             this.container.removeChild(this.provisionalScoreText)
         }
         if (score != null) {
-        this.provisionalScoreText = new PIXI.Text(score!, {
-            align: 'center'
-        });
-            this.provisionalScoreText.x = 720 / 2 - this.provisionalScoreText.width;
+            this.provisionalScoreText = new PIXI.Text(score!, {
+                align: 'left'
+            });
+            this.provisionalScoreText.x = (720 - this.provisionalScoreText.width) / 2;
             this.provisionalScoreText.y = 800;
             this.container.addChild(this.provisionalScoreText)
         }
@@ -285,8 +300,6 @@ export class GameState extends State {
 
     onLoop(delta: number): boolean {
         // Render
-        this.updateCells();
-        this.updateScore();
         let animations = this.animations;
         animations.forEach((i): void => {
             let stillRunning = i.onLoop(delta);
@@ -308,10 +321,13 @@ export class GameState extends State {
         for (let x = 0; x < Game.TABLE_WIDTH; ++x) {
             this.cells[x] = []
             for (let y = 0; y < Game.TABLE_HEIGHT; ++y) {
-                this.cells[x][y] = { card: null, selected: Back.Unavailable, x: x, y: y }
+                this.cells[x][y] = { card: null, selected: Back.Available, x: x, y: y }
             }
         }
         this.game.OnGameEvent = (i) => this.gameEvent(i);
+        this.updateCells();
+        this.updateScore();
+        this.unselectAll();
     }
 
     gameEvent(event: GameEvent): void {
@@ -362,7 +378,7 @@ export class GameState extends State {
         };
 
         GameState.backTextures = {};
-        for (let i = 0; i < 6; i++) {
+        for (let i = 0; i < 7; i++) {
             let width = CARD_WIDTH;
             let height = CARD_HEIGHT;
             let srcX = (2 + i) * width;

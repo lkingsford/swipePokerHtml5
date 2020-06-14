@@ -56,6 +56,7 @@ export interface Hand {
 export interface Card {
     suit: Suit;
     rank: Rank;
+    newCard?: boolean;
 }
 
 function randInt(min: number, max: number): number {
@@ -71,7 +72,7 @@ export class Game {
         for (let x = 0; x < Game.TABLE_WIDTH; ++x) {
             this.cards[x] = []
             for (let y = 0; y < Game.TABLE_HEIGHT; ++y) {
-                this.cards[x][y] = { suit: randInt(0, 4), rank: randInt(0, 13) }
+                this.cards[x][y] = { suit: randInt(0, 4), rank: randInt(0, 13), newCard: false }
             }
         }
     }
@@ -82,6 +83,13 @@ export class Game {
         this._score += h.score!;
 
         hand.forEach((i) => this.cards[i.x][i.y] = null)
+
+        // Clear new
+        for (let x = 0; x < Game.TABLE_WIDTH; ++x)
+            for (let y = (Game.TABLE_HEIGHT - 1); y >= 0; --y) {
+                if (this.cards[x][y] != null)
+                    this.cards[x][y]!.newCard = false
+            }
 
         // Drop
         for (let x = 0; x < Game.TABLE_WIDTH; ++x)
@@ -96,13 +104,33 @@ export class Game {
                 }
             }
 
-        this.OnGameEvent({event: GameEventType.Hand, hand: h});
+        // Add new cards
+        for (let i = 0; i < h.newCards!; ++i) {
+            // Get lowest row(s) (randomly choosing if multiple)
+            let columns = [...Array(Game.TABLE_WIDTH).keys()]
+            let columnCount: { x: number; count: number }[] = columns.map((x) => {
+                let rows = [...Array(Game.TABLE_HEIGHT).keys()]
+                return rows.filter(y => this.cards[x][y] != null).length
+            }).map((count, x): { x: number; count: number } => { return { x: x, count: count }; })
+            let lowestCount: number = min(columnCount.map((column: { x: number; count: number }) => column.count))
+            let columnsAtLowest = columnCount.filter((column) => column.count == lowestCount).map((column) => column.x);
+            let columnX = columnsAtLowest[randInt(0, columnsAtLowest.length)]
+            let y = Game.TABLE_HEIGHT - lowestCount - 1;
+            if (y > 0) {
+                this.cards[columnX][y] = {
+                    suit: randInt(0, 4),
+                    rank: randInt(0, 13),
+                    newCard: true
+                }
+            }
+        }
+
+        this.OnGameEvent({ event: GameEventType.Hand, hand: h });
     }
 
     public cards: (Card | null)[][] = [];
 
-    private static AdjustRankForAceAndIndex(rank: Rank)
-    {
+    private static AdjustRankForAceAndIndex(rank: Rank) {
         return rank == 0 ? 15 : rank + 1;
     }
 
@@ -206,7 +234,7 @@ export class Game {
         return hand;
     }
 
-    public OnGameEvent: {(event: GameEvent): void} = ()=>{};
+    public OnGameEvent: { (event: GameEvent): void } = () => { };
 
     private static IsFlush(cards: Card[]): boolean {
         return cards[0].suit == cards[1].suit &&
