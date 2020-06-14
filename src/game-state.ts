@@ -245,7 +245,7 @@ export class GameState extends State {
                     }
                 }
                 else {
-                    this.cells[x][y] = Back.None;
+                    this.cells[x][y].selected = Back.None;
                     let backSprite = this.getCellSelectedBacksprite(Back.None, false, x, y)
                     this.cells[x][y] = {
                         card: card!,
