@@ -6,6 +6,7 @@ import { min, max } from './better-minmax'
 
 const CARD_WIDTH = 60;
 const CARD_HEIGHT = 48;
+const CARD_LEEWAY = 10;
 const HAND_WIDTH = 256;
 const HAND_HEIGHT = 256;
 const GAME_WIDTH = 720;
@@ -91,12 +92,10 @@ export class GameState extends State {
                     selected.push(cell)
                 }
             }
-        console.log("Get selected called and returned ", selected)
         return selected
     }
 
     setAvailable(): void {
-        console.log("Set Available Called")
         let selected = this.getSelected();
         if (selected.length == 5) {
             for (let x = 0; x < Game.TABLE_WIDTH; ++x)
@@ -171,8 +170,8 @@ export class GameState extends State {
         }
     }
 
+
     tapCell(cell: Cell): void {
-        console.log("Tap cell");
         switch (cell.selected) {
             case Back.Available:
                 {
@@ -219,6 +218,52 @@ export class GameState extends State {
         this.updateCells();
     }
 
+    // event: any - because (time of writing) - types don't seem to be up to
+    // date
+    pointerMove(event: any, cell: Cell): boolean {
+        if (cell.backSprite == null)
+            return false;
+
+        let localPosition = <PIXI.Point> event.data.getLocalPosition(cell.backSprite!)
+        let mouseDown = event.data.buttons & 1;
+
+        if (!mouseDown) return true;
+        if (cell.selected != Back.Available) { return true; }
+
+        let localBound = cell.backSprite?.getLocalBounds()
+        let checkBox= new PIXI.Rectangle(localBound.x + CARD_LEEWAY,
+                                         localBound.y + CARD_LEEWAY, 
+                                         localBound.width - (CARD_LEEWAY * 2),
+                                         localBound.height - (CARD_LEEWAY * 2))
+        if (checkBox?.contains(localPosition.x, localPosition.y))
+            this.tapCell(cell);
+        return true;
+    }
+
+    setBackHitArea(drag: boolean) {
+        // The why: We want to be able to swipe diagonally, which means that
+        // we need to exclude the edges of the horizontal/vertical cards - as
+        // nobody's finger will be pixel perfect
+        if (drag) {
+            for (let x = 0; x < Game.TABLE_WIDTH; ++x)
+                for (let y = 0; y < Game.TABLE_HEIGHT; ++y) {
+                    let sprite = this.cells[x][y].backSprite;
+                    if (sprite == null) { continue; }
+                    sprite.hitArea = new PIXI.Rectangle(CARD_LEEWAY,
+                        CARD_LEEWAY, CARD_WIDTH - CARD_LEEWAY,
+                        CARD_HEIGHT - CARD_LEEWAY);
+                }
+
+        } else {
+            for (let x = 0; x < Game.TABLE_WIDTH; ++x)
+                for (let y = 0; y < Game.TABLE_HEIGHT; ++y) {
+                    let sprite = this.cells[x][y].backSprite;
+                    if (sprite == null) { continue; }
+                    sprite.hitArea = sprite.getLocalBounds()
+                }
+        }
+    }
+
     getCellSelectedBacksprite(selectedState: Back, newCard: boolean, x: number, y: number): PIXI.Sprite {
         let backSprite: PIXI.Sprite;
         if (newCard && selectedState == Back.Available) {
@@ -229,13 +274,13 @@ export class GameState extends State {
         backSprite.x = x * CARD_WIDTH;
         backSprite.y = y * CARD_HEIGHT;
         backSprite.interactive = true;
-        backSprite.on("pointerdown", () => this.tapCell(this.cells[x][y]))
+        backSprite.on("pointertap", () => this.tapCell(this.cells[x][y]))
+        backSprite.on("pointermove", (event: PIXI.interaction.InteractionData) => this.pointerMove(event, this.cells[x][y]))
         this.playfield.addChildAt(backSprite, 0);
         return backSprite;
     }
 
     unselectAll(): void {
-        console.log("Unselect all called")
         for (let x = 0; x < Game.TABLE_WIDTH; ++x)
             for (let y = 0; y < Game.TABLE_HEIGHT; ++y) {
                 let cell = this.cells[x][y]
@@ -248,7 +293,6 @@ export class GameState extends State {
     }
 
     updateCells(): void {
-        console.log("Update cells called")
         for (let x = 0; x < Game.TABLE_WIDTH; ++x)
             for (let y = 0; y < Game.TABLE_HEIGHT; ++y) {
                 if (this.cells[x][y].rankSprite)
