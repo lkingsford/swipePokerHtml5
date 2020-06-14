@@ -1,13 +1,13 @@
 import { min, max } from './better-minmax'
 
-export const enum Suit {
+export enum Suit {
     Heart = 0,
     Diamond,
     Spade,
     Club
 };
 
-export const enum Rank {
+export enum Rank {
     A = 0,
     _2,
     _3,
@@ -23,7 +23,7 @@ export const enum Rank {
     K
 }
 
-export const enum HandType {
+export enum HandType {
     _5OfAKind = 0,
     RoyalFlush,
     StraightFlush,

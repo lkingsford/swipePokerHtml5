@@ -1,6 +1,6 @@
 import { strict as assert } from 'assert'
 import * as PIXI from 'pixi.js'
-import { Hand, HandType, Game, Card, Suit, GameEvent, GameEventType } from './game'
+import { Hand, HandType, Game, Card, Suit, GameEvent, GameEventType, Rank } from './game'
 import { State } from './state'
 import { min, max } from './better-minmax'
 
@@ -26,7 +26,7 @@ interface Animation {
     onLoop: { (delta: number): boolean };
 }
 
-const enum Back {
+enum Back {
     Unavailable = 0,
     Available,
     Selected,
@@ -78,10 +78,65 @@ export class GameState extends State {
         this.playfield.scale = new PIXI.Point(1.2, 1.2);
         this.playfield.x = 0;
         this.playfield.y = 20;
+        this.ariaCard = document.getElementById("ariaCard")!
+        this.ariaHand = document.getElementById("ariaHand")!
+        this.ariaScore = document.getElementById("ariaScore")!
+        this.ariaNewCards = document.getElementById("ariaNewCards")!
         this.updateScore();
     }
 
     playfield: PIXI.Container;
+    ariaCard: HTMLElement;
+    ariaScore: HTMLElement;
+    ariaHand: HTMLElement;
+    ariaNewCards: HTMLElement;
+
+    // These are used for screenreaders
+    static RANK_TEXT: { [rank: number]: string } = {
+        0: 'Ace',
+        1: '2',
+        2: '3',
+        3: '4',
+        4: '5',
+        5: '6',
+        6: '7',
+        7: '8',
+        8: '9',
+        9: '10',
+        10: 'Jack',
+        11: 'Queen',
+        12: 'King',
+    }
+
+    static SUIT_TEXT: { [suit: number]: string } = {
+        0: 'Heart',
+        1: 'Diamond',
+        2: 'Spades',
+        3: 'Club',
+    }
+
+    static SELECTED_TEXT: { [selected: number]: string } = {
+        0: "Can't add to hand",
+        1: "Available",
+        2: "In hand",
+        3: "Part of valid hand",
+        4: "Part of invalid hand",
+        5: "No card",
+        6: "New card"
+    }
+
+    static HAND_TEXT: { [hand: number]: string } = {
+        0: '5 Of A Kind',
+        1: 'Royal Flush',
+        2: 'Straight Flush',
+        3: '4 Of A Kind',
+        4: 'FullHouse',
+        5: 'Flush',
+        6: 'Straight',
+        7: '3 Of A Kind',
+        8: '2 Pair',
+        9: 'Pair'
+    }
 
     getSelected(): Cell[] {
         let selected: Cell[] = []
@@ -177,6 +232,9 @@ export class GameState extends State {
                 {
                     cell.selected = Back.Selected;
                     let selected = this.getSelected();
+                    let selectedCardAriaText = selected.map((i) => GameState.getCellAriaText(i))
+                        .join(', ')
+                    this.ariaCard.textContent = `Cards selected are ${selectedCardAriaText}`
                     this.setAvailable();
                     if (selected.length == 5) {
                         let cards = selected.filter((i) => (i.card != null))
@@ -185,10 +243,13 @@ export class GameState extends State {
                         for (let x = 0; x < Game.TABLE_WIDTH; ++x)
                             for (let y = 0; y < Game.TABLE_HEIGHT; ++y) {
                                 let cell = this.cells[x][y]
-                                if (cell.selected == Back.Selected)
+                                if (cell.selected == Back.Selected) {
                                     cell.selected = hand.valid ? Back.Ready : Back.Invalid
+                                }
                                 if (hand.valid) {
-                                    this.updateProvisionalScore(`(${hand.score} - ${hand.newCards} new cards)`);
+                                    this.updateProvisionalScore(hand.score, hand.newCards);
+                                } else {
+                                    this.ariaCard.textContent = "Invalid hand"
                                 }
                             }
                     }
@@ -210,6 +271,18 @@ export class GameState extends State {
                 {
                     let selected = this.getSelected()
                     this.game?.ClaimHand(selected.map((i) => { return { card: i.card!, x: i.x, y: i.y } }));
+                    let newCardsText = "";
+                    for (let x = 0; x < Game.TABLE_WIDTH; ++x)
+                        for (let y = 0; y < Game.TABLE_HEIGHT; ++y) {
+                            let card = this.game?.cards[x][y]
+                            if (card?.newCard ?? false) {
+                                newCardsText += `${GameState.RANK_TEXT[card!.rank]} ${GameState.SUIT_TEXT[card!.suit]}`;
+                                newCardsText += ` in x ${cell.x + 1} y ${cell.y + 1} `
+                            }
+                        }
+                    if (newCardsText != "") {
+                        this.ariaNewCards.textContent = `New cards are ${newCardsText}`;
+                    }
                     this.unselectAll();
                     this.updateScore();
                 }
@@ -218,23 +291,41 @@ export class GameState extends State {
         this.updateCells();
     }
 
+    static getCellAriaText(cell: Cell): string {
+        let cardText = ""
+        let cardState = ""
+        if (cell.card == null) {
+            cardText = "Empty"
+        }
+        else {
+            if (cell.selected != 1) {
+                cardState = this.SELECTED_TEXT[cell.selected]
+            }
+            cardText = `${this.RANK_TEXT[cell.card.rank]} ${this.SUIT_TEXT[cell.card.suit]}`;
+        }
+        return `${cardState} ${cardText} in x ${cell.x + 1} y ${cell.y + 1}`
+    }
+
     // event: any - because (time of writing) - types don't seem to be up to
     // date
     pointerMove(event: any, cell: Cell): boolean {
         if (cell.backSprite == null)
             return false;
 
-        let localPosition = <PIXI.Point> event.data.getLocalPosition(cell.backSprite!)
+        let localPosition = <PIXI.Point>event.data.getLocalPosition(cell.backSprite!)
         let mouseDown = event.data.buttons & 1;
 
-        if (!mouseDown) return true;
+        let localBound = cell.backSprite?.getLocalBounds()
+        if (localBound.contains(localPosition.x, localPosition.y))
+            this.ariaCard.textContent = GameState.getCellAriaText(cell);
+
         if (cell.selected != Back.Available) { return true; }
 
-        let localBound = cell.backSprite?.getLocalBounds()
-        let checkBox= new PIXI.Rectangle(localBound.x + CARD_LEEWAY,
-                                         localBound.y + CARD_LEEWAY, 
-                                         localBound.width - (CARD_LEEWAY * 2),
-                                         localBound.height - (CARD_LEEWAY * 2))
+        let checkBox = new PIXI.Rectangle(localBound.x + CARD_LEEWAY,
+            localBound.y + CARD_LEEWAY,
+            localBound.width - (CARD_LEEWAY * 2),
+            localBound.height - (CARD_LEEWAY * 2))
+        if (!mouseDown) return true;
         if (checkBox?.contains(localPosition.x, localPosition.y))
             this.tapCell(cell);
         return true;
@@ -290,6 +381,7 @@ export class GameState extends State {
                     cell.selected = Back.None;
                 }
             }
+        this.ariaCard.textContent = "All cards unselected";
     }
 
     updateCells(): void {
@@ -362,21 +454,25 @@ export class GameState extends State {
 
         this.container.addChild(this.scoreText)
         this.lastScore = score;
+
+        this.ariaScore.textContent = `Score is ${score}`;
     }
 
     provisionalScoreText: PIXI.Text | null = null
 
-    updateProvisionalScore(score: string | null): void {
+    updateProvisionalScore(score: number | null = null, newCards: number | null = null): void {
         if (this.provisionalScoreText != null) {
             this.container.removeChild(this.provisionalScoreText)
         }
         if (score != null) {
-            this.provisionalScoreText = new PIXI.Text(score!, {
+            let provText = `(${score} - ${newCards} new cards)`;
+            this.provisionalScoreText = new PIXI.Text(provText, {
                 align: 'left'
             });
             this.provisionalScoreText.x = (720 - this.provisionalScoreText.width) / 2;
             this.provisionalScoreText.y = 800;
             this.container.addChild(this.provisionalScoreText)
+            this.ariaCard.textContent = `This hand will score ${score} with ${newCards} new cards`;
         }
     }
 
@@ -416,6 +512,7 @@ export class GameState extends State {
     gameEvent(event: GameEvent): void {
         switch (event.event) {
             case GameEventType.Hand:
+                this.ariaHand.textContent = GameState.HAND_TEXT[event.hand!.handType!];
                 this.triggerHandAnimation(event.hand!)
                 break;
         }
