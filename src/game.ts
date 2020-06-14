@@ -116,7 +116,7 @@ export class Game {
             let columnsAtLowest = columnCount.filter((column) => column.count == lowestCount).map((column) => column.x);
             let columnX = columnsAtLowest[randInt(0, columnsAtLowest.length)]
             let y = Game.TABLE_HEIGHT - lowestCount - 1;
-            if (y > 0) {
+            if (y >= 0) {
                 this.cards[columnX][y] = {
                     suit: randInt(0, 4),
                     rank: randInt(0, 13),
