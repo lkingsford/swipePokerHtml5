@@ -42,6 +42,7 @@
   },
   "dependencies": {
     "nan": "^2.14.1",
+    "pixi-sound": "^3.0.4",
     "pixi.js": "^5.2.4"
   }
 }
