@@ -18,7 +18,8 @@ export class Title extends State.State {
         this.container.addChild(this.getStartedText);
         this.container.interactive = true
         this.container.on("pointerdown", ()=>{this.startGame()});
-        this.container.hitArea = new PIXI.Rectangle(0, 0, width, height)
+        // -40 is so mute button works
+        this.container.hitArea = new PIXI.Rectangle(0, 0, width, height - 40)
         this.ariaCard = document.getElementById("ariaCard")!
 
         sound.add("title_sound", this.resources["title_sound"].sound)
