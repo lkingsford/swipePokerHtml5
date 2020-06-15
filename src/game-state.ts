@@ -1,9 +1,10 @@
-import { strict as assert } from 'assert'
 import * as PIXI from 'pixi.js'
+import sound from 'pixi-sound'
 import { Hand, HandType, Game, Card, Suit, GameEvent, GameEventType, Rank } from './game'
 import { State } from './state'
 import { GameOverState } from './game-over-state'
 import { min, max } from './better-minmax'
+import { randInt } from './better-rand'
 
 const CARD_WIDTH = 60;
 const CARD_HEIGHT = 48;
@@ -162,6 +163,7 @@ export class GameState extends State {
         return selected
     }
 
+
     setAvailable(): void {
         let selected = this.getSelected();
         if (selected.length == 5) {
@@ -237,6 +239,16 @@ export class GameState extends State {
         }
     }
 
+    playBadHandSound(): void { }
+    playClaimHandSound(): void { }
+
+    playSelectedSound(): void {
+        let idx = randInt(1, 8)
+        console.log(idx)
+        GameState.selectSound?.play(idx.toString())
+    }
+
+    static selectSound: sound.Sound | null = null;
 
     tapCell(cell: Cell): void {
         switch (cell.selected) {
@@ -258,12 +270,17 @@ export class GameState extends State {
                                 if (cell.selected == Back.Selected) {
                                     cell.selected = hand.valid ? Back.Ready : Back.Invalid
                                 }
-                                if (hand.valid) {
-                                    this.updateProvisionalScore(hand.score, hand.newCards);
-                                } else {
-                                    this.ariaCard.textContent = "Invalid hand"
-                                }
+
                             }
+                        if (hand.valid) {
+                            this.updateProvisionalScore(hand.score, hand.newCards);
+                            this.playSelectedSound();
+                        } else {
+                            this.ariaCard.textContent = "Invalid hand"
+                            this.playBadHandSound();
+                        }
+                    } else {
+                        this.playSelectedSound();
                     }
                 }
                 break;
@@ -283,6 +300,7 @@ export class GameState extends State {
                 {
                     let selected = this.getSelected()
                     this.game?.ClaimHand(selected.map((i) => { return { card: i.card!, x: i.x, y: i.y } }));
+                    this.playClaimHandSound();
                     let newCardsText = "";
                     for (let x = 0; x < Game.TABLE_WIDTH; ++x)
                         for (let y = 0; y < Game.TABLE_HEIGHT; ++y) {
@@ -552,6 +570,9 @@ export class GameState extends State {
         loader.add("hands_texture", "assets/Hands.png");
         loader.add("score_font", "assets/ScoreFont.fnt");
         loader.add("controls_texture", "assets/Controls.png");
+        loader.add("goodHands_sound", "assets/GoodHands.mp3");
+        loader.add("badHands_sound", "assets/BadHands.mp3");
+        loader.add("select_sound", "assets/Select.mp3");
     }
 
     public static rankTextures: { [index: number]: PIXI.Texture };
@@ -602,5 +623,30 @@ export class GameState extends State {
             new PIXI.Rectangle(0, 0, 160, 40));
         GameState.controlsTextures[1] = new PIXI.Texture(resources["controls_texture"].texture.baseTexture as PIXI.BaseTexture,
             new PIXI.Rectangle(0, 40, 160, 40));
+
+        let goodHands_sound = resources["goodHands_sound"].sound;
+        goodHands_sound.addSprites({
+            "1": { start: 0, end: 3.9 },
+            "2": { start: 3.95, end: 7.152 }
+        })
+        sound.add("goodHands_sound", goodHands_sound);
+        let badHands_sound = resources["badHands_sound"].sound;
+        badHands_sound.addSprites({
+            "1": { start: 0.07, end: 3.143 },
+            "2": { start: 3.506, end: 7.628 }
+        })
+        sound.add("badHands_sound", badHands_sound);
+        let selectSound = resources["select_sound"].sound;
+        selectSound.addSprites({
+            "1": { start: 0.015, end: 0.374 },
+            "2": { start: 0.424, end: 0.636 },
+            "3": { start: 0.792, end: 1.146 },
+            "4": { start: 1.376, end: 1.681 },
+            "5": { start: 1.808, end: 2.125 },
+            "6": { start: 2.299, end: 2.479 },
+            "7": { start: 2.644, end: 2.754 },
+            "8": { start: 3.077, end: 3.355 }
+        })
+        GameState.selectSound = selectSound;
     }
 }

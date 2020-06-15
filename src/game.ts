@@ -1,4 +1,5 @@
 import { min, max } from './better-minmax'
+import { randInt } from './better-rand'
 
 export enum Suit {
     Heart = 0,
@@ -59,9 +60,6 @@ export interface Card {
     newCard?: boolean;
 }
 
-function randInt(min: number, max: number): number {
-    return Math.floor(Math.random() * max) + min;
-}
 export class Game {
     public static readonly TABLE_WIDTH = 10;
     public static readonly TABLE_HEIGHT = 12;
