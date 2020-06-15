@@ -5,6 +5,8 @@ import { GameState } from './game-state'
 import { GameOverState } from './game-over-state'
 
 const app = new PIXI.Application({ width: 720, height: 960, backgroundColor: 0xDDDDFF });
+// For itch.io
+//app.renderer.plugins.interaction.autoPreventDefault = false;
 
 const sprites: { [key: string]: PIXI.Texture } = {};
 
@@ -24,10 +26,23 @@ function start_loop(app: PIXI.Application, resources: { [index: string]: PIXI.Lo
   titleState.start();
   app.ticker.add((delta: number) => update(delta / 60))
   app.ticker.start()
+  window.addEventListener("keydown", keydown)
+  window.addEventListener("keyup", keyup)
 }
 
 function update(delta: number) {
   titleState.loop(delta);
+}
+
+function keydown(event: KeyboardEvent) {
+
+}
+
+function keyup(event: KeyboardEvent) {
+  if (event.key == 'm' || event.key == 'M') {
+    configureMuteButton(!globalMuted);
+    sound.toggleMuteAll();
+  }
 }
 
 const loading_text_style = new PIXI.TextStyle();
@@ -40,6 +55,7 @@ sound.init();
 let muteButtonSprite: PIXI.Sprite
 let muteButtonOffTexture: PIXI.Texture
 let muteButtonOnTexture: PIXI.Texture
+let globalMuted = false;
 
 function configureMuteButton(muted: boolean) {
   if (muteButtonSprite == undefined) {
@@ -47,13 +63,15 @@ function configureMuteButton(muted: boolean) {
   }
   let texture = muted ? muteButtonOnTexture : muteButtonOffTexture;
   muteButtonSprite = new PIXI.Sprite(texture)
-  muteButtonSprite.x = 660;
+  muteButtonSprite.x = 620;
   muteButtonSprite.y = 921;
   muteButtonSprite.interactive = true;
   if (muted) {
+    globalMuted = true;
     muteButtonSprite.on("pointertap", () => { sound.toggleMuteAll(); configureMuteButton(false); })
   }
   else {
+    globalMuted = false;
     muteButtonSprite.on("pointertap", () => { sound.toggleMuteAll(); configureMuteButton(true); })
   }
   app.stage.addChild(muteButtonSprite);
@@ -62,7 +80,7 @@ function configureMuteButton(muted: boolean) {
 loader.load((loader: PIXI.Loader, resources: Partial<Record<string, PIXI.LoaderResource>>) => {
   loading_text_sprite.destroy()
   console.log("Resources loaded")
-  ariaCard.textContent = "Loaded.";
+  ariaCard.textContent = "Loaded. Push m to mute music.";
   GameState.getTextures(loader.resources)
   // This is in controls_texture - defined in game_state add resources
   muteButtonOffTexture = new PIXI.Texture(resources["controls_texture"]?.texture.baseTexture as PIXI.BaseTexture,
