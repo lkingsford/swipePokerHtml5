@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js'
+import sound from 'pixi-sound'
 import * as State from './state'
 import { GameState } from './game-state'
 
@@ -22,6 +23,7 @@ export class GameOverState extends State.State {
         this.container.hitArea = new PIXI.Rectangle(0, 0, width, height)
         this.ariaCard = document.getElementById("ariaCard")!
         this.ariaCard.textContent = `Game Over - ${points} points. Click to return to title.`;
+        sound.add("gameOver_sound", this.resources['gameOver_sound'].sound);
     }
 
     stillLooping: boolean = true;
@@ -29,8 +31,17 @@ export class GameOverState extends State.State {
     scoreText: PIXI.Text;
     ariaCard: HTMLElement;
 
+    onStart() {
+        sound.play("gameOver_sound");
+    }
+
     onLoop(delta: number): boolean {
         return this.stillLooping;
+    }
+
+    static addResources(loader: PIXI.Loader):  void
+    {
+        loader.add("gameOver_sound", "assets/GameOver.mp3");
     }
 }
 

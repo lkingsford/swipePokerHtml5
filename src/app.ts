@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js'
 import sound from 'pixi-sound'
 import { Title } from './title'
 import { GameState } from './game-state'
+import { GameOverState } from './game-over-state'
 
 const app = new PIXI.Application({ width: 720, height: 960, backgroundColor: 0xDDDDFF });
 
@@ -12,6 +13,7 @@ document.body.appendChild(app.view);
 const loader: PIXI.Loader = PIXI.Loader.shared;
 GameState.addResources(loader)
 Title.addResources(loader)
+GameOverState.addResources(loader)
 
 let titleState: Title;
 
