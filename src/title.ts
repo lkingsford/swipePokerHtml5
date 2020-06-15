@@ -35,6 +35,10 @@ export class Title extends State.State {
         super.setState(gameState);
     }
 
+    onResume(): void {
+        this.ariaCard.textContent = "Click or tap to start";
+    }
+
     static addResources(loader: PIXI.Loader):  void
     {
         loader.add("title_texture", "assets/Title.png");

@@ -20,8 +20,10 @@ export class State {
 
     private lastState: State | null = null;
     private curState: State | null = null;
+    private doNotResume: boolean = false;
 
-    setState(nextState: State) : void {
+    setState(nextState: State, doNotResume: boolean = false) : void {
+        this.doNotResume = doNotResume;
         if (this.curState != null)
         {
             this.curState.onDone();
@@ -62,7 +64,11 @@ export class State {
         if (!this.curState.loop(delta)) {
             this.curState.done();
             this.curState = null;
-            this.resume();
+            if (!this.doNotResume) {
+                this.resume();
+            } else {
+                return false;
+            }
         }
         return true;
     }

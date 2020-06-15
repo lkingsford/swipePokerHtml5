@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="80mm"
+   height="40mm"
+   viewBox="0 0 80 40"
+   version="1.1"
+   id="svg5146"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+   sodipodi:docname="Controls.svg"
+   inkscape:export-filename="e:\Documents\pixi1\build\assets\Controls.png"
+   inkscape:export-xdpi="50.799999"
+   inkscape:export-ydpi="50.799999">
+  <defs
+     id="defs5140" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="3.1548766"
+     inkscape:cx="183.29007"
+     inkscape:cy="39.261965"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-width="1715"
+     inkscape:window-height="936"
+     inkscape:window-x="840"
+     inkscape:window-y="324"
+     inkscape:window-maximized="0">
+    <inkscape:grid
+       type="xygrid"
+       id="grid5722"
+       spacingy="5.2916665"
+       spacingx="5.2916665" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata5143">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-3.5547654,-4.4082309)">
+    <g
+       id="g5732">
+      <rect
+         style="fill:#999999;fill-opacity:1;stroke:#000000;stroke-width:0.2559053;stroke-linecap:butt;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none"
+         id="rect5173"
+         width="72.447639"
+         height="17.896122"
+         x="7.3309455"
+         y="26.384159"
+         ry="0.95323128"
+         rx="0.95323128" />
+      <text
+         id="text4734"
+         y="41.101109"
+         x="11.883315"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16.93333244px;line-height:1.25;font-family:'Bou Western';-inkscape-font-specification:'Bou Western';letter-spacing:0px;word-spacing:0px;fill:#800000;fill-opacity:1;stroke:#ffffff;stroke-width:0.56500006;stroke-miterlimit:4;stroke-dasharray:none"
+         xml:space="preserve"><tspan
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Bou Western';-inkscape-font-specification:'Bou Western';fill:#800000;stroke:#ffffff;stroke-width:0.56500006;stroke-miterlimit:4;stroke-dasharray:none"
+           y="41.101109"
+           x="11.883315"
+           id="tspan4732"
+           sodipodi:role="line">Resign</tspan></text>
+    </g>
+    <g
+       id="g5727"
+       transform="translate(0,-2.6458334)">
+      <rect
+         rx="0.95323128"
+         ry="0.95323128"
+         y="7.9588761"
+         x="7.3309455"
+         height="17.896122"
+         width="72.447639"
+         id="rect5716"
+         style="fill:#f2f2f2;fill-opacity:1;stroke:#ff0000;stroke-width:0.2559053;stroke-linecap:butt;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16.93333244px;line-height:1.25;font-family:'Bou Western';-inkscape-font-specification:'Bou Western';letter-spacing:0px;word-spacing:0px;fill:#800000;fill-opacity:1;stroke:#000000;stroke-width:0.56500006;stroke-miterlimit:4;stroke-dasharray:none"
+         x="11.883315"
+         y="22.675823"
+         id="text5720"><tspan
+           sodipodi:role="line"
+           id="tspan5718"
+           x="11.883315"
+           y="22.675823"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Bou Western';-inkscape-font-specification:'Bou Western';fill:#800000;stroke:#000000;stroke-width:0.56500006;stroke-miterlimit:4;stroke-dasharray:none">Resign</tspan></text>
+    </g>
+  </g>
+</svg>

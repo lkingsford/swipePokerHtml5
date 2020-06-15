@@ -2,6 +2,7 @@ import { strict as assert } from 'assert'
 import * as PIXI from 'pixi.js'
 import { Hand, HandType, Game, Card, Suit, GameEvent, GameEventType, Rank } from './game'
 import { State } from './state'
+import { GameOverState } from './game-over-state'
 import { min, max } from './better-minmax'
 
 const CARD_WIDTH = 60;
@@ -83,13 +84,24 @@ export class GameState extends State {
         this.ariaScore = document.getElementById("ariaScore")!
         this.ariaNewCards = document.getElementById("ariaNewCards")!
         this.updateScore();
+
+        this.resignButton = new PIXI.Sprite(GameState.controlsTextures[0]);
+        this.resignButton.x = 0;
+        this.resignButton.y = 920;
+        this.resignButton.interactive = true;
+        this.resignButton.on("pointertap", () => this.gameOver());
+        this.resignButton.on("pointerover", () => this.ariaCard.textContent = "Resign")
+        this.container.addChild(this.resignButton);
     }
 
+    gameOverState: GameOverState | null = null;
     playfield: PIXI.Container;
     ariaCard: HTMLElement;
     ariaScore: HTMLElement;
     ariaHand: HTMLElement;
     ariaNewCards: HTMLElement;
+
+    resignButton: PIXI.Sprite;
 
     // These are used for screenreaders
     static RANK_TEXT: { [rank: number]: string } = {
@@ -478,6 +490,9 @@ export class GameState extends State {
 
 
     onLoop(delta: number): boolean {
+        if (this.gameOverState != null) {
+            return this.gameOverState!.loop(delta);
+        }
         // Render
         let animations = this.animations;
         animations.forEach((i): void => {
@@ -523,6 +538,11 @@ export class GameState extends State {
         this.animations.push(handAnimation)
     }
 
+    gameOver(): void {
+        this.gameOverState = new GameOverState(this.app, this.resources, this.game!.score);
+        super.setState(this.gameOverState, true);
+    }
+
     animations: Animation[] = [];
     game: Game | null = null;
     cells: Cell[][] = [];
@@ -531,12 +551,14 @@ export class GameState extends State {
         loader.add("cards_texture", "assets/Cards.png");
         loader.add("hands_texture", "assets/Hands.png");
         loader.add("score_font", "assets/ScoreFont.fnt");
+        loader.add("controls_texture", "assets/Controls.png");
     }
 
     public static rankTextures: { [index: number]: PIXI.Texture };
     public static suitTextures: { [index: number]: PIXI.Texture };
     public static backTextures: { [index: number]: PIXI.Texture };
     public static handTextures: { [index: number]: PIXI.Texture };
+    public static controlsTextures: { [index: number]: PIXI.Texture };
 
     static getTextures(resources: { [index: string]: PIXI.LoaderResource }) {
         GameState.suitTextures = {};
@@ -574,5 +596,11 @@ export class GameState extends State {
             let srcY = Math.floor(i / 4) * height;
             GameState.handTextures[i] = new PIXI.Texture(resources["hands_texture"].texture.baseTexture as PIXI.BaseTexture, new PIXI.Rectangle(srcX, srcY, width, height));
         };
+
+        GameState.controlsTextures = {};
+        GameState.controlsTextures[0] = new PIXI.Texture(resources["controls_texture"].texture.baseTexture as PIXI.BaseTexture,
+            new PIXI.Rectangle(0, 0, 160, 40));
+        GameState.controlsTextures[1] = new PIXI.Texture(resources["controls_texture"].texture.baseTexture as PIXI.BaseTexture,
+            new PIXI.Rectangle(0, 40, 160, 40));
     }
 }
