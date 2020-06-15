@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js'
+import sound from 'pixi-sound'
 import * as State from './state'
 import { GameState } from './game-state'
 
@@ -19,7 +20,9 @@ export class Title extends State.State {
         this.container.on("pointerdown", ()=>{this.startGame()});
         this.container.hitArea = new PIXI.Rectangle(0, 0, width, height)
         this.ariaCard = document.getElementById("ariaCard")!
-        this.ariaCard.textContent = "Click or tap to start";
+
+        sound.add("title_sound", this.resources["title_sound"].sound)
+        sound.add("startGame_sound", this.resources["startGame_sound"].sound)
     }
 
     titleSprite: PIXI.Sprite;
@@ -30,17 +33,25 @@ export class Title extends State.State {
         return true;
     }
 
+    onStart(): void {
+        this.onResume();
+    }
+
     startGame(): void {
         let gameState = new GameState(this.app, this.resources);
+        sound.play("startGame_sound");
         super.setState(gameState);
     }
 
     onResume(): void {
         this.ariaCard.textContent = "Click or tap to start";
+        sound.play("title_sound");
     }
 
     static addResources(loader: PIXI.Loader):  void
     {
         loader.add("title_texture", "assets/Title.png");
+        loader.add("title_sound", "assets/Title.mp3");
+        loader.add("startGame_sound", "assets/StartGame.mp3");
     }
 }

@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js'
+import sound from 'pixi-sound'
 import { Title } from './title'
 import { GameState } from './game-state'
 
@@ -30,6 +31,7 @@ const loading_text_sprite = new PIXI.Text("Loadin'", loading_text_style);
 loading_text_sprite.x = 100
 loading_text_sprite.y = 50
 app.stage.addChild(loading_text_sprite)
+sound.init();
 
 loader.load((loader: PIXI.Loader, resources: Partial<Record<string, PIXI.LoaderResource>>) => {
   loading_text_sprite.destroy()
