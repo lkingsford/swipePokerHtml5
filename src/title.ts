@@ -18,10 +18,13 @@ export class Title extends State.State {
         this.container.interactive = true
         this.container.on("pointerdown", ()=>{this.startGame()});
         this.container.hitArea = new PIXI.Rectangle(0, 0, width, height)
+        this.ariaCard = document.getElementById("ariaCard")!
+        this.ariaCard.textContent = "Click or tap to start";
     }
 
     titleSprite: PIXI.Sprite;
     getStartedText: PIXI.Text;
+    ariaCard: HTMLElement;
 
     onLoop(delta: number): boolean {
         return true;
