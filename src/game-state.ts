@@ -239,16 +239,26 @@ export class GameState extends State {
         }
     }
 
-    playBadHandSound(): void { }
-    playClaimHandSound(): void { }
+    playBadHandSound(): void {
+        let idx = randInt(1, 2)
+        console.log(idx)
+        GameState.badHandsSound?.play(idx.toString())
+    }
+
+    playClaimHandSound(): void {
+        let idx = randInt(1, 2)
+        console.log(idx)
+        GameState.goodHandsSound?.play(idx.toString())
+    }
 
     playSelectedSound(): void {
         let idx = randInt(1, 8)
-        console.log(idx)
         GameState.selectSound?.play(idx.toString())
     }
 
     static selectSound: sound.Sound | null = null;
+    static badHandsSound: sound.Sound | null = null;
+    static goodHandsSound: sound.Sound | null = null;
 
     tapCell(cell: Cell): void {
         switch (cell.selected) {
@@ -624,18 +634,19 @@ export class GameState extends State {
         GameState.controlsTextures[1] = new PIXI.Texture(resources["controls_texture"].texture.baseTexture as PIXI.BaseTexture,
             new PIXI.Rectangle(0, 40, 160, 40));
 
-        let goodHands_sound = resources["goodHands_sound"].sound;
-        goodHands_sound.addSprites({
+        let goodHandsSound = resources["goodHands_sound"].sound;
+        goodHandsSound.addSprites({
             "1": { start: 0, end: 3.9 },
             "2": { start: 3.95, end: 7.152 }
         })
-        sound.add("goodHands_sound", goodHands_sound);
-        let badHands_sound = resources["badHands_sound"].sound;
-        badHands_sound.addSprites({
+        GameState.goodHandsSound = goodHandsSound;
+        let badHandsSound = resources["badHands_sound"].sound;
+        badHandsSound.addSprites({
             "1": { start: 0.07, end: 3.143 },
             "2": { start: 3.506, end: 7.628 }
         })
-        sound.add("badHands_sound", badHands_sound);
+
+        GameState.badHandsSound = badHandsSound;
         let selectSound = resources["select_sound"].sound;
         selectSound.addSprites({
             "1": { start: 0.015, end: 0.374 },
