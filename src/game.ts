@@ -161,14 +161,14 @@ export class Game {
                 handType: HandType.RoyalFlush,
                 score: 250,
                 valid: true,
-                newCards: 20
+                newCards: 13
             };
         } else if (isFlush && isStraight) {
             return {
                 handType: HandType.StraightFlush,
                 score: 150 + (Game.AdjustRankForAceAndIndex(highestRank)) * 5,
                 valid: true,
-                newCards: 16
+                newCards: 111
             };
         } else if (max(qOfRank) == 4) {
             let rank = (qOfRank.findIndex((i) => i == 4) + 1)
@@ -177,7 +177,7 @@ export class Game {
                 handType: HandType._4OfAKind,
                 score: 100 + rank * 4,
                 valid: true,
-                newCards: 13
+                newCards: 10
             };
         } else if ((max(qOfRank) == 3) && (min(qOfRank.filter((i) => i > 0))) == 2) {
             let rank = (qOfRank.findIndex((i) => i == 3))
@@ -186,14 +186,14 @@ export class Game {
                 handType: HandType.FullHouse,
                 score: 60 + rank * 3,
                 valid: true,
-                newCards: 10
+                newCards: 8
             };
         } else if (isFlush) {
             return {
                 handType: HandType.Flush,
                 score: 70,
                 valid: true,
-                newCards: 8
+                newCards: 7
             };
         } else if (isStraight) {
             let rank = Game.AdjustRankForAceAndIndex(highestRank);
@@ -201,7 +201,7 @@ export class Game {
                 handType: HandType.Straight,
                 score: 53 + rank,
                 valid: true,
-                newCards: 6
+                newCards: 5
             };
         } else if (max(qOfRank) == 3) {
             let rank = (qOfRank.findIndex((i) => i == 3))
@@ -210,7 +210,7 @@ export class Game {
                 handType: HandType._3OfAKind,
                 score: 26 + rank * 2,
                 valid: true,
-                newCards: 4
+                newCards: 2
             };
         } else if ((qOfRank.filter((i) => i == 2).length) == 2) {
             let rank = qOfRank.lastIndexOf(2)
@@ -219,7 +219,7 @@ export class Game {
                 handType: HandType._2Pair,
                 score: 2 * rank,
                 valid: true,
-                newCards: 3
+                newCards: 0
             };
         } else if (max(qOfRank) == 2) {
             let rank = qOfRank.lastIndexOf(2)
@@ -228,7 +228,7 @@ export class Game {
                 handType: HandType.Pair,
                 score: rank,
                 valid: true,
-                newCards: 2
+                newCards: 0
             };
         }
         return hand;
