@@ -437,7 +437,7 @@ export class GameState extends State {
                 if (this.game!.cards[x][y] != null) {
                     let suitSprite = new PIXI.Sprite(GameState.suitTextures[card?.suit!]);
                     let blackSuit = (card?.suit == Suit.Club || card?.suit == Suit.Spade);
-                    let rankSprite = new PIXI.Sprite(GameState.rankTextures[card?.rank! + (blackSuit ? 0 : 13)]);
+                    let rankSprite = new PIXI.Sprite(GameState.rankTextures[card?.rank! + card?.suit! * 13]);
                     suitSprite.x = (x + 0.5) * CARD_WIDTH;
                     suitSprite.y = y * CARD_HEIGHT;
                     rankSprite.x = x * CARD_WIDTH;
@@ -602,7 +602,7 @@ export class GameState extends State {
         };
 
         GameState.rankTextures = {};
-        for (let i = 0; i < 26; i++) {
+        for (let i = 0; i < 52; i++) {
             let width = CARD_WIDTH / 2;
             let height = CARD_HEIGHT;
             let srcX = (i % 13) * width;
