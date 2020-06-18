@@ -474,7 +474,7 @@ export class GameState extends State {
     }
 
     lastScore: string = "-1";
-    scoreText: PIXI.Text | null = null;
+    scoreText: PIXI.BitmapText | null = null;
 
     updateScore(): void {
         let score = `${(this.game?.score ?? 0)}`;
@@ -485,9 +485,9 @@ export class GameState extends State {
             this.container.removeChild(this.scoreText!);
         }
         this.updateProvisionalScore(null)
-        this.scoreText = new PIXI.Text(`${score}`, {
+        this.scoreText = new PIXI.BitmapText(`${score}`, {
+            font: { name: 'ScoreFont', size: 48 },
             align: 'left',
-            tint: 0xFF0000,
         });
         this.scoreText.x = (720 - this.scoreText.width) / 2;
         this.scoreText.y = 850;
