@@ -1,4 +1,4 @@
-import * as Game from '../src/game';
+import * as Game from '../game/game';
 import { expect } from 'chai';
 import 'mocha';
 var data_driven = require('data-driven')
