@@ -9,7 +9,8 @@ function createWindow () {
     height: 960,
     webPreferences: {
       nodeIntegration: true
-    }
+    },
+    title: "Swipe Poker"
   })
 
   // and load the index.html of the app.

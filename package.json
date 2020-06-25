@@ -1,7 +1,7 @@
 {
   "name": "SwipePoker",
   "version": "1.2.0",
-  "description": "",
+  "description": "Swipe Poker - the Swiping Poker Puzzle Game, by Lachlan Kingsford.",
   "scripts": {
     "test": "cross-env TS_NODE_FILES=true mocha --exit --require ts-node/register --colors test/**/*.ts",
     "start": "webpack-dev-server --mode development --config webpack.config.dev.js",

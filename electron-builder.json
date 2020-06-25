@@ -1,13 +1,16 @@
 {
     "appId": "nerdygentleman.swipe.poker",
     "mac": {
-        "category": "public.app-category.card-games"
+        "category": "public.app-category.card-games",
+        "icon": "Icon.png"
     },
     "win": {
-        "target": "portable"
+        "target": "portable",
+        "icon": "Icon.ico"
     },
     "directories": {
-        "output": "dist-desktop"
+        "output": "dist-desktop",
+        "buildResources": "./build/build"
     },
     "files": [
         "./dist-tsc/desktop-client/*",
