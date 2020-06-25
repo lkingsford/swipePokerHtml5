@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>webpack App</title>
+  <style>
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+    }
+
+    body {
+      display: flex;
+      display: -webkit-flex;
+      -webkit-justify-content: center;
+      justify-content: center;
+      -webkit-align-items: center;
+      align-items: center;
+    }
+
+    canvas {
+      display: block;
+      outline: none;
+      height: 100%;
+      max-height: 133.333vw;
+      width: 100%;
+      max-width: 75vh;
+    }
+
+    .screenReaderOnly {
+      position: absolute;
+      left: -10000px;
+      top: auto;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="screenReaderOnly" aria-atomic="true" aria-live="assertive" id="ariaCard"></div>
+  <div class="screenReaderOnly" aria-atomic="true" aria-live="polite" id="ariaScore"></div>
+  <div class="screenReaderOnly" aria-atomic="true" aria-live="polite" id="ariaHand"></div>
+  <div class="screenReaderOnly" aria-atomic="true" aria-live="polite" id="ariaNewCards"></div>
+</body>
+
+<script>
+require("../dist-tsc/desktop-client/app.js")
+</script>
