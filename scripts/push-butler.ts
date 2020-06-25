@@ -1,8 +1,7 @@
 import os = require('os');
 import path = require('path');
 const exec = require('child_process').exec;
-
-//./utils/butler.exe push dist_prod nerdygentleman/itch-test:game
+let pkgjson = require('../package.json')
 
 let channel: string = process.argv[2]
 
@@ -19,7 +18,17 @@ else
     butlerPath = "./" + butlerPath
 }
 
-exec(butlerPath + " push dist_prod " + channel, {shell: true}, (err: any, stdout: any, stderr: any) => {
+let source: string = "dist_prod";
+
+switch(channel) {
+    case "win":
+        source: `dist-desktop/${pkgjson.name}-${pkgjson.version}-win.zip`
+
+}
+
+let outChannel: string = "nerdygentleman/swipe-poker:" + channel;
+
+exec(`${butlerPath} push ${source} ${outChannel}`, {shell: true}, (err: any, stdout: any, stderr: any) => {
     if (err) {
         console.log(`error: ${err.message}`);
         console.log(`stderr: ${stderr}`);

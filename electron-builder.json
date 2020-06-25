@@ -5,11 +5,11 @@
         "icon": "Icon.png"
     },
     "win": {
-        "target": "portable",
+        "target": "zip",
         "icon": "Icon.ico"
     },
     "directories": {
-        "output": "dist-desktop",
+        "output": "dist-desktop/",
         "buildResources": "./build/build"
     },
     "files": [

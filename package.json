@@ -9,7 +9,8 @@
     "build_prod": "webpack --mode production --config webpack.config.prod.js",
     "build_scripts": "tsc -p scripts",
     "build_desktop": "tsc; npx electron-builder -c electron-builder.json",
-    "publish": "npm run-script build_prod; node utils/push-butler.js nerdygentleman/swipe-poker:game",
+    "publish": "npm run-script build_prod; node utils/push-butler.js game",
+    "publish_win": "npm run-script build_desktop; node utils/push-butler.js win",
     "postinstall": "npm run-script build_scripts; node utils/get-butler.js"
   },
   "keywords": [],
