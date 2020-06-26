@@ -406,7 +406,7 @@ export class GameState extends State {
         backSprite.y = y * CARD_HEIGHT;
         backSprite.interactive = true;
         backSprite.on("pointertap", () => this.tapCell(this.cells[x][y]))
-        backSprite.on("pointermove", (event: PIXI.interaction.InteractionData) => this.pointerMove(event, this.cells[x][y]))
+        backSprite.on("pointermove", (event: PIXI.InteractionData) => this.pointerMove(event, this.cells[x][y]))
         this.playfield.addChildAt(backSprite, 0);
         return backSprite;
     }
