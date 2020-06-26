@@ -8,6 +8,11 @@
         "target": "zip",
         "icon": "Icon.ico"
     },
+    "linux": {
+	"target": "AppImage",
+        "icon": "Icon.png",
+	"category": "Game"
+    },
     "directories": {
         "output": "dist-desktop/",
         "buildResources": "./build/build"

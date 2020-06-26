@@ -11,7 +11,8 @@
     "build_win": "npx tsc; npx electron-builder -c electron-builder.json",
     "build_linux": "npx tsc; npx electron-builder -c electron-builder.json -l",
     "publish": "npm run-script build_prod; node utils/push-butler.js game",
-    "publish_win": "npm run-script build_desktop; node utils/push-butler.js win",
+    "publish_win": "npm run-script build_win; node utils/push-butler.js win",
+    "publish_linux": "npm run-script build_linux; node utils/push-butler.js linux",
     "postinstall": "npm run-script build_scripts; node utils/get-butler.js"
   },
   "keywords": [],
