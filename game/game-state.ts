@@ -3,6 +3,7 @@ import sound from 'pixi-sound'
 import { Hand, HandType, Game, Card, Suit, GameEvent, GameEventType, Rank } from './game'
 import { State } from './state'
 import { GameOverState } from './game-over-state'
+import { HelpState } from './help-state'
 import { min, max } from './better-minmax'
 import { randInt } from './better-rand'
 
@@ -93,9 +94,18 @@ export class GameState extends State {
         this.resignButton.on("pointertap", () => this.gameOver());
         this.resignButton.on("pointerover", () => this.ariaCard.textContent = "Resign")
         this.container.addChild(this.resignButton);
+
+        this.helpButton = new PIXI.Sprite(GameState.controlsTextures[2]);
+        this.helpButton.x = 180;
+        this.helpButton.y = 920;
+        this.helpButton.interactive = true;
+        this.helpButton.on("pointertap", () => this.showHelp());
+        this.helpButton.on("pointerover", () => this.ariaCard.textContent = "Help")
+        this.container.addChild(this.helpButton);
     }
 
     gameOverState: GameOverState | null = null;
+    helpState: HelpState | null = null;
     playfield: PIXI.Container;
     ariaCard: HTMLElement;
     ariaScore: HTMLElement;
@@ -103,6 +113,7 @@ export class GameState extends State {
     ariaNewCards: HTMLElement;
 
     resignButton: PIXI.Sprite;
+    helpButton: PIXI.Sprite;
 
     // These are used for screenreaders
     static RANK_TEXT: { [rank: number]: string } = {
@@ -436,7 +447,6 @@ export class GameState extends State {
                 let card = this.game!.cards[x][y]
                 if (this.game!.cards[x][y] != null) {
                     let suitSprite = new PIXI.Sprite(GameState.suitTextures[card?.suit!]);
-                    let blackSuit = (card?.suit == Suit.Club || card?.suit == Suit.Spade);
                     let rankSprite = new PIXI.Sprite(GameState.rankTextures[card?.rank! + card?.suit! * 13]);
                     suitSprite.x = (x + 0.5) * CARD_WIDTH;
                     suitSprite.y = y * CARD_HEIGHT;
@@ -571,6 +581,11 @@ export class GameState extends State {
         super.setState(this.gameOverState, true);
     }
 
+    showHelp(): void {
+        this.helpState = new HelpState(this.app, this.resources);
+        super.setState(this.helpState, false)
+    }
+
     animations: Animation[] = [];
     game: Game | null = null;
     cells: Cell[][] = [];
@@ -633,6 +648,8 @@ export class GameState extends State {
             new PIXI.Rectangle(0, 0, 160, 40));
         GameState.controlsTextures[1] = new PIXI.Texture(resources["controls_texture"].texture.baseTexture as PIXI.BaseTexture,
             new PIXI.Rectangle(0, 40, 160, 40));
+        GameState.controlsTextures[2] = new PIXI.Texture(resources["controls_texture"].texture.baseTexture as PIXI.BaseTexture,
+            new PIXI.Rectangle(0, 120, 160, 40));
 
         let goodHandsSound = resources["goodHands_sound"].sound;
         goodHandsSound.addSprites({

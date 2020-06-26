@@ -84,9 +84,9 @@ loader.load((loader: PIXI.Loader, resources: Partial<Record<string, PIXI.LoaderR
   GameState.getTextures(loader.resources)
   // This is in controls_texture - defined in game_state add resources
   muteButtonOffTexture = new PIXI.Texture(resources["controls_texture"]?.texture.baseTexture as PIXI.BaseTexture,
-    new PIXI.Rectangle(11, 90, 40, 40));
+    new PIXI.Rectangle(0, 80, 40, 40));
   muteButtonOnTexture = new PIXI.Texture(resources["controls_texture"]?.texture.baseTexture as PIXI.BaseTexture,
-    new PIXI.Rectangle(54, 90, 40, 40));
+    new PIXI.Rectangle(40, 80, 40, 40));
   configureMuteButton(false);
 
   start_loop(app, loader.resources)

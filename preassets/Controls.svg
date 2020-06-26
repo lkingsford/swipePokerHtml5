@@ -9,16 +9,16 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="80mm"
-   height="40mm"
-   viewBox="0 0 80 40"
+   width="160"
+   height="200"
+   viewBox="0 0 42.333332 52.916665"
    version="1.1"
    id="svg5146"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
    sodipodi:docname="Controls.svg"
    inkscape:export-filename="e:\Documents\pixi1\build\assets\Controls.png"
-   inkscape:export-xdpi="50.799999"
-   inkscape:export-ydpi="50.799999">
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96">
   <defs
      id="defs5140" />
   <sodipodi:namedview
@@ -28,26 +28,29 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="3.1548766"
-     inkscape:cx="183.29007"
-     inkscape:cy="39.261965"
+     inkscape:zoom="8"
+     inkscape:cx="7.5929288"
+     inkscape:cy="87.206849"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="true"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
-     fit-margin-bottom="0"
+     fit-margin-bottom="10"
      inkscape:window-width="1715"
      inkscape:window-height="936"
-     inkscape:window-x="840"
-     inkscape:window-y="324"
-     inkscape:window-maximized="0">
+     inkscape:window-x="854"
+     inkscape:window-y="242"
+     inkscape:window-maximized="0"
+     units="px">
     <inkscape:grid
        type="xygrid"
        id="grid5722"
-       spacingy="5.2916665"
-       spacingx="5.2916665" />
+       spacingy="10.583333"
+       spacingx="10.583333"
+       originx="0"
+       originy="0.66145831" />
   </sodipodi:namedview>
   <metadata
      id="metadata5143">
@@ -65,9 +68,10 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-3.5547654,-4.4082309)">
+     transform="translate(-3.5547654,8.508425)">
     <g
-       id="g5732">
+       id="g5732"
+       transform="matrix(0.51177407,0,0,0.51177407,2.448811,-10.830625)">
       <rect
          style="fill:#999999;fill-opacity:1;stroke:#000000;stroke-width:0.2559053;stroke-linecap:butt;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none"
          id="rect5173"
@@ -91,7 +95,7 @@
     </g>
     <g
        id="g5727"
-       transform="translate(0,-2.6458334)">
+       transform="matrix(0.51177407,0,0,0.51177407,2.448811,-12.184694)">
       <rect
          rx="0.95323128"
          ry="0.95323128"
@@ -113,5 +117,63 @@
            y="22.675823"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Bou Western';-inkscape-font-specification:'Bou Western';fill:#800000;stroke:#000000;stroke-width:0.56500006;stroke-miterlimit:4;stroke-dasharray:none">Resign</tspan></text>
     </g>
+    <rect
+       rx="0.48783904"
+       ry="0.48783904"
+       y="12.721254"
+       x="4.0470772"
+       height="9.2076693"
+       width="9.2123222"
+       id="rect6973"
+       style="fill:#f2f2f2;fill-opacity:1;stroke:#ff0000;stroke-width:0.13096569;stroke-linecap:butt;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <path
+       style="fill:#800000;stroke:#000000;stroke-width:0.64739418;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 5.9579546,18.435674 h 1.0944567 l 1.6533086,2.863615 h 1.8017411 v -7.99254 H 8.7048269 l -1.5653654,2.71129 H 5.9150347 v 2.396174 z"
+       id="path6986"
+       inkscape:connector-curvature="0" />
+    <rect
+       style="fill:#4d4d4d;fill-opacity:1;stroke:#000000;stroke-width:0.13096569;stroke-linecap:butt;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect6990"
+       width="9.2123222"
+       height="9.2076693"
+       x="14.884343"
+       y="12.721254"
+       ry="0.48783904"
+       rx="0.48783904" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path6992"
+       d="m 16.795221,18.435674 h 1.094457 l 1.653309,2.863615 h 1.801741 v -7.99254 h -1.802635 l -1.565364,2.71129 h -1.224428 v 2.396174 z"
+       style="fill:#800000;stroke:#b3b3b3;stroke-width:0.64739418;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <path
+       style="fill:none;stroke:#ff0000;stroke-width:0.28915235;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 16.258723,13.929087 6.287761,6.28776"
+       id="path6994"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#ff0000;stroke-width:0.28915235;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 16.215803,20.259767 6.55601,-6.556009"
+       id="path6996"
+       inkscape:connector-curvature="0" />
+    <rect
+       rx="0.48783904"
+       ry="0.48783904"
+       y="23.607801"
+       x="6.2005987"
+       height="9.1587715"
+       width="37.076824"
+       id="rect7035"
+       style="fill:#f2f2f2;fill-opacity:1;stroke:#ff0000;stroke-width:0.13096569;stroke-linecap:butt;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.66604042px;line-height:1.25;font-family:'Bou Western';-inkscape-font-specification:'Bou Western';letter-spacing:0px;word-spacing:0px;fill:#800000;fill-opacity:1;stroke:#000000;stroke-width:0.28915238;stroke-miterlimit:4;stroke-dasharray:none"
+       x="13.248467"
+       y="31.139553"
+       id="text7039"><tspan
+         sodipodi:role="line"
+         id="tspan7037"
+         x="13.248467"
+         y="31.139553"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Bou Western';-inkscape-font-specification:'Bou Western';fill:#800000;stroke:#000000;stroke-width:0.28915238;stroke-miterlimit:4;stroke-dasharray:none">HELP</tspan></text>
   </g>
 </svg>
