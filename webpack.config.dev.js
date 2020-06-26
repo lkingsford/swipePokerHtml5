@@ -4,7 +4,7 @@ const HTMLWebpackPlugin = require('html-webpack-plugin')
 const path = require('path');
 
 module.exports = {
-  entry: './src/app.ts',
+  entry: './itch-client/app.ts',
   devtool: 'inline-source-map',
   module: {
     rules: [
