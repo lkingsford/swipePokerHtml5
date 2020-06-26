@@ -22,9 +22,11 @@ let source: string = "dist_prod";
 
 switch(channel) {
     case "win":
-        source: `dist-desktop/${pkgjson.name}-${pkgjson.version}-win.zip`
+        source = `dist-desktop/${pkgjson.name}-${pkgjson.version}-win.zip`
     case "linux":
-        source: `dist-desktop/${pkgjson.name}-${pkgjson.version}.AppImage`
+        source = `dist-desktop/${pkgjson.name}-${pkgjson.version}.AppImage`
+    case "mac":
+        source = `dist-desktop/${pkgjson.name}-${pkgjson.version}.dmg`
 
 }
 
