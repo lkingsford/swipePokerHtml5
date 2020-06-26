@@ -15,6 +15,29 @@ export class HelpState extends State.State {
         this.container.hitArea = new PIXI.Rectangle(0, 0, width, height)
         this.ariaCard = document.getElementById("ariaCard")!
         this.addHands();
+
+        let rulesTitleText = new PIXI.Text("Rules:");
+        rulesTitleText.x = 10;
+        rulesTitleText.y = 720;
+        this.container.addChild(rulesTitleText);
+        this.container.addChild(rulesTitleText);
+
+        let rules = "In the classic game, you've got a " +
+        "10×10 grid of cards. \n" +
+        "You can select a valid poker hand horizontally" +
+        ", vertically or diagonally.\n" +
+        "When you've selected a valid hand, you can tap or click it to get " +
+        "points for it. \n" +
+        "It is then removed from the board. \n" +
+        "If the hand is better than a 3 of a Kind, you will get some more" +
+        "cards. \n" +
+        "Once you have no more valid hands, you must forfeit - and it is " +
+        "game over.";
+        let rulesText = new PIXI.Text(rules, {fontSize: 14});
+        rulesText.x = 10;
+        rulesText.y = rulesTitleText.y + rulesTitleText.height + 3;
+        this.container.addChild(rulesText);
+        this.container.addChild(rulesText);
     }
 
     stillLooping: boolean = true;
