@@ -6,9 +6,8 @@ import { GameOverState } from '../game/game-over-state'
 
 const app = new PIXI.Application({ width: 720, height: 960, backgroundColor: 0xDDDDFF });
 // For itch.io
-//app.renderer.plugins.interaction.autoPreventDefault = false;
 
-const sprites: { [key: string]: PIXI.Texture } = {};
+app.renderer.plugins.interaction.autoPreventDefault = false;
 
 document.body.appendChild(app.view);
 let ariaCard = document.getElementById("ariaCard")!

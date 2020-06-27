@@ -114,6 +114,9 @@ export class GameState extends State {
 
     resignButton: PIXI.Sprite;
     helpButton: PIXI.Sprite;
+    cursorSprite: PIXI.Sprite | null = null;
+    cursorX: number = 0;
+    cursorY: number = 0;
 
     // These are used for screenreaders
     static RANK_TEXT: { [rank: number]: string } = {
@@ -339,6 +342,7 @@ export class GameState extends State {
                 break;
         }
         this.updateCells();
+        this.cursorMove(cell.x, cell.y);
     }
 
     static getCellAriaText(cell: Cell): string {
@@ -376,15 +380,88 @@ export class GameState extends State {
             localBound.width - (CARD_LEEWAY * 2),
             localBound.height - (CARD_LEEWAY * 2))
         if (!mouseDown) return true;
-        if (checkBox?.contains(localPosition.x, localPosition.y))
+        if (checkBox?.contains(localPosition.x, localPosition.y)) {
             this.tapCell(cell);
+        }
+        this.hideCursor();
         return true;
     }
 
     onKeyUp(event: KeyboardEvent): void {
-        if (event.key == 'h' || event.key == 'H') {
-            this.showHelp();
+        switch (event.key) {
+            case 'h':
+            case 'H':
+                this.showHelp();
+                break;
+            case 'R':
+            case 'r':
+                this.gameOver();
+                break;
+            case 'Up':
+            case 'ArrowUp':
+            case 'W':
+            case 'w':
+                this.cursorMove(this.cursorX, this.cursorY - 1);
+                this.showCursor();
+                break;
+            case 'Down':
+            case 'ArrowDown':
+            case 'S':
+            case 's':
+                this.cursorMove(this.cursorX, this.cursorY + 1);
+                this.showCursor();
+                break;
+            case 'Left':
+            case 'ArrowLeft':
+            case 'A':
+            case 'a':
+                this.cursorMove(this.cursorX - 1, this.cursorY);
+                this.showCursor();
+                break;
+            case 'Right':
+            case 'ArrowRight':
+            case 'D':
+            case 'd':
+                this.cursorMove(this.cursorX + 1, this.cursorY);
+                this.showCursor();
+                break;
+            case ' ':
+            case 'E':
+            case 'e':
+                this.tapCell(this.cells[this.cursorX][this.cursorY]);
+                this.showCursor();
+                break;
         }
+    }
+
+    onKeyDown(event: KeyboardEvent): void {
+
+    }
+
+    cursorMove(x: number, y: number): void {
+        if (x >= 0 && y >= 0 && x < Game.TABLE_WIDTH && y < Game.TABLE_HEIGHT) {
+            this.cursorX = x;
+            this.cursorY = y;
+        }
+        this.ariaCard.textContent = GameState.getCellAriaText(this.cells[this.cursorX][this.cursorY]);
+        if (this.cursorSprite != null) {
+            this.showCursor();
+        }
+    }
+
+    hideCursor(): void {
+        if (this.cursorSprite != null) {
+            this.playfield.removeChild(this.cursorSprite!);
+        }
+        this.cursorSprite = null;
+    }
+
+    showCursor(): void {
+        this.hideCursor();
+        this.cursorSprite = new PIXI.Sprite(GameState.cursorTexture);
+        this.cursorSprite.x = this.cursorX * CARD_WIDTH;
+        this.cursorSprite.y = this.cursorY * CARD_HEIGHT;
+        this.playfield.addChild(this.cursorSprite!);
     }
 
     setBackHitArea(drag: boolean) {
@@ -565,6 +642,8 @@ export class GameState extends State {
         this.updateCells();
         this.updateScore();
         this.unselectAll();
+        this.cursorMove(0, 0);
+        this.ariaCard.textContent = "Game started. Push H for help."
     }
 
     gameEvent(event: GameEvent): void {
@@ -609,6 +688,7 @@ export class GameState extends State {
     public static suitTextures: { [index: number]: PIXI.Texture };
     public static backTextures: { [index: number]: PIXI.Texture };
     public static handTextures: { [index: number]: PIXI.Texture };
+    public static cursorTexture: PIXI.Texture;
     public static controlsTextures: { [index: number]: PIXI.Texture };
 
     static getTextures(resources: { [index: string]: PIXI.LoaderResource }) {
@@ -638,6 +718,8 @@ export class GameState extends State {
             let srcY = 0;
             GameState.backTextures[i] = new PIXI.Texture(resources["cards_texture"].texture.baseTexture as PIXI.BaseTexture, new PIXI.Rectangle(srcX, srcY, width, height));
         };
+
+        GameState.cursorTexture = new PIXI.Texture(resources["cards_texture"].texture.baseTexture as PIXI.BaseTexture, new PIXI.Rectangle(0, CARD_HEIGHT * 5, CARD_WIDTH, CARD_HEIGHT))
 
         GameState.handTextures = {};
         for (let i = 0; i < 10; i++) {

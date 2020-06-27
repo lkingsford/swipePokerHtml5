@@ -34,7 +34,11 @@ export class HelpState extends State.State {
         "cards. \n" +
         "Once you have no more valid hands, you must forfeit - and it is " +
         "game over.";
-        this.ariaCard.textContent = rules;
+
+        let screenReaderAdditions = "You can resign by pushing R. You can " +
+        "move the cursor with the arrow keys or W, A, S and D. You can " +
+        "tap a card with the space bar or with E.";
+        this.ariaCard.textContent = rules + screenReaderAdditions;
         let rulesText = new PIXI.Text(rules, {fontSize: 14});
         rulesText.x = 10;
         rulesText.y = rulesTitleText.y + rulesTitleText.height + 3;

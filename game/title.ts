@@ -4,7 +4,7 @@ import * as State from './state'
 import { GameState } from './game-state'
 
 export class Title extends State.State {
-    constructor (app: PIXI.Application, resources: { [index: string]: PIXI.LoaderResource }) {
+    constructor(app: PIXI.Application, resources: { [index: string]: PIXI.LoaderResource }) {
         super(app, resources);
         this.titleSprite = new PIXI.Sprite(resources['title_texture'].texture)
         let width = app.screen.width;
@@ -17,7 +17,7 @@ export class Title extends State.State {
         this.getStartedText.y = (this.titleSprite.y + this.titleSprite.height) + 30;
         this.container.addChild(this.getStartedText);
         this.container.interactive = true
-        this.container.on("pointerdown", ()=>{this.startGame()});
+        this.container.on("pointerdown", () => { this.startGame() });
         // -40 is so mute button works
         this.container.hitArea = new PIXI.Rectangle(0, 0, width, height - 40)
         this.ariaCard = document.getElementById("ariaCard")!
@@ -49,8 +49,11 @@ export class Title extends State.State {
         sound.play("title_sound");
     }
 
-    static addResources(loader: PIXI.Loader):  void
-    {
+    onKeyDown(): void {
+        this.startGame();
+    }
+
+    static addResources(loader: PIXI.Loader): void {
         loader.add("title_texture", "assets/Title.png");
         loader.add("title_sound", "assets/Title.mp3");
         loader.add("startGame_sound", "assets/StartGame.mp3");
