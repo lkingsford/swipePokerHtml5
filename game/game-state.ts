@@ -515,6 +515,7 @@ export class GameState extends State {
                 }
             }
         this.ariaCard.textContent = "All cards unselected";
+        this.updateProvisionalScore(null, null);
     }
 
     updateCells(): void {
