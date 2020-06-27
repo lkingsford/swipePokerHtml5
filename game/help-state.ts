@@ -14,6 +14,7 @@ export class HelpState extends State.State {
         this.container.on("pointerdown", () => { this.stillLooping = false; });
         this.container.hitArea = new PIXI.Rectangle(0, 0, width, height)
         this.ariaCard = document.getElementById("ariaCard")!
+        this.ariaHand = document.getElementById("ariaHand")!
         this.addHands();
 
         let rulesTitleText = new PIXI.Text("Rules:");
@@ -29,10 +30,11 @@ export class HelpState extends State.State {
         "When you've selected a valid hand, you can tap or click it to get " +
         "points for it. \n" +
         "It is then removed from the board. \n" +
-        "If the hand is better than a 3 of a Kind, you will get some more" +
+        "If the hand is better than a 3 of a Kind, you will get some more " +
         "cards. \n" +
         "Once you have no more valid hands, you must forfeit - and it is " +
         "game over.";
+        this.ariaCard.textContent = rules;
         let rulesText = new PIXI.Text(rules, {fontSize: 14});
         rulesText.x = 10;
         rulesText.y = rulesTitleText.y + rulesTitleText.height + 3;
@@ -42,6 +44,7 @@ export class HelpState extends State.State {
 
     stillLooping: boolean = true;
     ariaCard: HTMLElement;
+    ariaHand: HTMLElement;
 
     onStart() {
     }
@@ -55,6 +58,8 @@ export class HelpState extends State.State {
     }
 
     addHands(): void {
+        this.ariaHand.textContent = "";
+
         this.addHand(10, 60,
             [{ rank: Rank._9, suit: Suit.Club },
             { rank: Rank._9, suit: Suit.Diamond },
@@ -158,6 +163,7 @@ export class HelpState extends State.State {
         descriptionText.x = x;
         descriptionText.y = y;
         this.container.addChild(descriptionText);
+        let exampleHandText = ""; // For screenreader
         for (let i: number = 0; i < 5; ++i) {
             let backSprite = new PIXI.Sprite(GameState.backTextures[1]);
             let ix = x + i * backSprite.width;
@@ -172,10 +178,15 @@ export class HelpState extends State.State {
             suitSprite.x = ix + rankSprite.width;
             suitSprite.y = iy;
             this.container.addChild(suitSprite);
+
+            exampleHandText += `${GameState.RANK_TEXT[cards[i].rank]} ${GameState.SUIT_TEXT[cards[i].suit]}`;
         }
+
         scoringRulesText.x = x;
         scoringRulesText.y = iy + GameState.backTextures[1].height + 10;
         this.container.addChild(scoringRulesText);
+
+        this.ariaHand.textContent += `${description} Example: ${exampleHandText} Scores ${scoringRules.replace('×', ' times ')}`;
     }
 
     static addResources(loader: PIXI.Loader): void {
