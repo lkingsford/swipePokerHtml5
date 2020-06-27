@@ -34,13 +34,15 @@ function update(delta: number) {
 }
 
 function keydown(event: KeyboardEvent) {
-
+  titleState.keyDown(event);
 }
 
 function keyup(event: KeyboardEvent) {
   if (event.key == 'm' || event.key == 'M') {
     configureMuteButton(!globalMuted);
     sound.toggleMuteAll();
+  } else {
+    titleState.keyUp(event);
   }
 }
 

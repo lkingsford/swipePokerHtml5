@@ -50,6 +50,10 @@ export class HelpState extends State.State {
         return this.stillLooping;
     }
 
+    onKeyUp(event: KeyboardEvent): void {
+        this.stillLooping = false;
+    }
+
     addHands(): void {
         this.addHand(10, 60,
             [{ rank: Rank._9, suit: Suit.Club },

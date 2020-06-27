@@ -17,6 +17,8 @@ export class State {
     onDone(): void {};
     onPause(): void {};
     onResume(): void {};
+    onKeyUp(event: KeyboardEvent): void {};
+    onKeyDown(event: KeyboardEvent): void {};
 
     private lastState: State | null = null;
     private curState: State | null = null;
@@ -71,5 +73,21 @@ export class State {
             }
         }
         return true;
+    }
+
+    keyUp(event: KeyboardEvent): void {
+        if (this.curState == null) {
+            this.onKeyUp(event);
+        } else {
+            this.curState.keyUp(event);
+        }
+    }
+
+    keyDown(event: KeyboardEvent): void {
+        if (this.curState == null) {
+            this.onKeyDown(event);
+        } else {
+            this.curState.keyDown(event);
+        }
     }
 }

@@ -174,7 +174,6 @@ export class GameState extends State {
         return selected
     }
 
-
     setAvailable(): void {
         let selected = this.getSelected();
         if (selected.length == 5) {
@@ -380,6 +379,12 @@ export class GameState extends State {
         if (checkBox?.contains(localPosition.x, localPosition.y))
             this.tapCell(cell);
         return true;
+    }
+
+    onKeyUp(event: KeyboardEvent): void {
+        if (event.key == 'h' || event.key == 'H') {
+            this.showHelp();
+        }
     }
 
     setBackHitArea(drag: boolean) {
