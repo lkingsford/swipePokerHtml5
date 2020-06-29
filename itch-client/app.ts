@@ -8,6 +8,8 @@ const app = new PIXI.Application({ width: 720, height: 960, backgroundColor: 0xD
 // For itch.io
 
 app.renderer.plugins.interaction.autoPreventDefault = false;
+app.renderer.view.tabIndex = 0;
+app.renderer.view.focus();
 
 document.body.appendChild(app.view);
 let ariaCard = document.getElementById("ariaCard")!
@@ -35,6 +37,7 @@ function update(delta: number) {
 
 function keydown(event: KeyboardEvent) {
   titleState.keyDown(event);
+  event.view?.event?.preventDefault();
 }
 
 function keyup(event: KeyboardEvent) {
@@ -44,6 +47,7 @@ function keyup(event: KeyboardEvent) {
   } else {
     titleState.keyUp(event);
   }
+  event.view?.event?.preventDefault();
 }
 
 const loading_text_style = new PIXI.TextStyle();
