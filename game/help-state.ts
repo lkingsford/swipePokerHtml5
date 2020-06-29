@@ -58,6 +58,10 @@ export class HelpState extends State.State {
     }
 
     onKeyUp(event: KeyboardEvent): void {
+        // Because sometimes loaded with ?
+        if (event.key == "Shift") {
+            return;
+        }
         this.stillLooping = false;
     }
 

@@ -45,7 +45,7 @@ export class Title extends State.State {
     }
 
     onResume(): void {
-        this.ariaCard.textContent = "Click or tap to start";
+        this.ariaCard.textContent = "Click, tap or press a key to start";
         sound.play("title_sound");
     }
 

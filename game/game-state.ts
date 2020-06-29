@@ -391,6 +391,8 @@ export class GameState extends State {
         switch (event.key) {
             case 'h':
             case 'H':
+            case '/':
+            case '?':
                 this.showHelp();
                 break;
             case 'R':
@@ -644,7 +646,7 @@ export class GameState extends State {
         this.updateScore();
         this.unselectAll();
         this.cursorMove(0, 0);
-        this.ariaCard.textContent = "Game started. Push H for help."
+        this.ariaCard.textContent = "Game started. Push H or Question Mark for help."
     }
 
     gameEvent(event: GameEvent): void {
