@@ -78,7 +78,9 @@ export class GameState extends State {
         }
         this.playfield = new PIXI.Container();
         this.container.addChild(this.playfield);
-        this.playfield.scale = new PIXI.Point(1.2, 1.2);
+        let scale = min([GAME_WIDTH / (Game.TABLE_WIDTH * CARD_WIDTH),
+                         GAME_HEIGHT / (Game.TABLE_HEIGHT * CARD_HEIGHT)]);
+        this.playfield.scale = new PIXI.Point(scale, scale);
         this.playfield.x = 0;
         this.playfield.y = 20;
         this.ariaCard = document.getElementById("ariaCard")!
@@ -254,13 +256,11 @@ export class GameState extends State {
 
     playBadHandSound(): void {
         let idx = randInt(1, 2)
-        console.log(idx)
         GameState.badHandsSound?.play(idx.toString())
     }
 
     playClaimHandSound(): void {
         let idx = randInt(1, 2)
-        console.log(idx)
         GameState.goodHandsSound?.play(idx.toString())
     }
 
