@@ -37,7 +37,7 @@ export class HelpState extends State.State {
 
         let screenReaderAdditions = "You can resign by pushing R. You can " +
         "move the cursor with the arrow keys or W, A, S and D. You can " +
-        "tap a card with the space bar or with E.";
+        "tap a card with the space bar, with E or with Enter.";
         this.ariaCard.textContent = rules + screenReaderAdditions;
         let rulesText = new PIXI.Text(rules, {fontSize: 14});
         rulesText.x = 10;

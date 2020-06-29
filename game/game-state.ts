@@ -430,6 +430,7 @@ export class GameState extends State {
             case ' ':
             case 'E':
             case 'e':
+            case 'Enter':
                 this.tapCell(this.cells[this.cursorX][this.cursorY]);
                 this.showCursor();
                 break;
