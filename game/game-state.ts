@@ -327,10 +327,10 @@ export class GameState extends State {
         if (cell.backSprite == null)
             return false;
 
-        let localPosition = <PIXI.Point>event.data.getLocalPosition(cell.backSprite!)
+        let localPosition = <PIXI.Point>event.data.getLocalPosition(this.playfield)
         let mouseDown = event.data.buttons & 1;
 
-        let localBound = cell.backSprite?.getLocalBounds()
+        let localBound = cell.backSprite?.getBounds();
         if (localBound.contains(localPosition.x, localPosition.y))
             this.ariaCard.textContent = GameState.getCellAriaText(cell);
 
@@ -342,7 +342,9 @@ export class GameState extends State {
             localBound.height - (CARD_LEEWAY * 2))
         if (!mouseDown) return true;
         if (checkBox?.contains(localPosition.x, localPosition.y)) {
+            console.log(cell.x, cell.y, localPosition.x, localPosition.y, cell.backSprite.y)
             this.tapCell(cell);
+            return false;
         }
         this.hideCursor();
         return true;
