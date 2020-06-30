@@ -61,8 +61,8 @@ export interface Card {
 }
 
 export class Game {
-    public static readonly TABLE_WIDTH = 8;
-    public static readonly TABLE_HEIGHT = 10;
+    public static readonly TABLE_WIDTH = 6;
+    public static readonly TABLE_HEIGHT = 8;
 
     StartGame(): void {
         // Lay cards
