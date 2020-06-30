@@ -19,6 +19,7 @@ interface Cell {
     backSprite?: PIXI.Sprite | null;
     suitSprite?: PIXI.Sprite;
     rankSprite?: PIXI.Sprite;
+    decoratorSprite?: PIXI.Sprite | null;
     card: Card | null;
     selected: Back;
     x: number;
@@ -37,6 +38,13 @@ enum Back {
     Invalid,
     None,
     NewCard // Special - as sprite. Not to be set.
+}
+
+enum Decorator {
+    None = 0,
+    SameRank,
+    OneHigher,
+    OneLower
 }
 
 class HandAnimation implements Animation {
@@ -79,7 +87,7 @@ export class GameState extends State {
         this.playfield = new PIXI.Container();
         this.container.addChild(this.playfield);
         let scale = min([GAME_WIDTH / (Game.TABLE_WIDTH * CARD_WIDTH),
-                         GAME_HEIGHT / (Game.TABLE_HEIGHT * CARD_HEIGHT)]);
+        GAME_HEIGHT / (Game.TABLE_HEIGHT * CARD_HEIGHT)]);
         this.playfield.scale = new PIXI.Point(scale, scale);
         this.playfield.x = 0;
         this.playfield.y = 20;
@@ -113,6 +121,7 @@ export class GameState extends State {
     ariaScore: HTMLElement;
     ariaHand: HTMLElement;
     ariaNewCards: HTMLElement;
+    mouseIsOver: Cell | null = null;
 
     resignButton: PIXI.Sprite;
     helpButton: PIXI.Sprite;
@@ -370,8 +379,12 @@ export class GameState extends State {
         let mouseDown = event.data.buttons & 1;
 
         let localBound = cell.backSprite?.getLocalBounds()
-        if (localBound.contains(localPosition.x, localPosition.y))
+        if (localBound.contains(localPosition.x, localPosition.y)) {
             this.ariaCard.textContent = GameState.getCellAriaText(cell);
+            this.mouseIsOver = cell;
+            this.hideCursor();
+            this.updateCells();
+        }
 
         if (cell.selected != Back.Available) { return true; }
 
@@ -383,7 +396,6 @@ export class GameState extends State {
         if (checkBox?.contains(localPosition.x, localPosition.y)) {
             this.tapCell(cell);
         }
-        this.hideCursor();
         return true;
     }
 
@@ -446,6 +458,7 @@ export class GameState extends State {
             this.cursorX = x;
             this.cursorY = y;
         }
+        this.mouseIsOver = this.cells[this.cursorX][this.cursorY];
         this.ariaCard.textContent = GameState.getCellAriaText(this.cells[this.cursorX][this.cursorY]);
         if (this.cursorSprite != null) {
             this.showCursor();
@@ -530,6 +543,10 @@ export class GameState extends State {
                     this.playfield.removeChild(this.cells[x][y].suitSprite!);
                 if (this.cells[x][y].backSprite)
                     this.playfield.removeChild(this.cells[x][y].backSprite!);
+                if (this.cells[x][y].decoratorSprite != null) {
+                    this.playfield.removeChild(this.cells[x][y].decoratorSprite!)
+                    this.cells[x][y].decoratorSprite = null;
+                }
                 let card = this.game!.cards[x][y]
                 if (this.game!.cards[x][y] != null) {
                     let suitSprite = new PIXI.Sprite(GameState.suitTextures[card?.suit!]);
@@ -545,11 +562,38 @@ export class GameState extends State {
                         selected = Back.Available;
                     }
                     let backSprite = this.getCellSelectedBacksprite(selected, card?.newCard ?? false, x, y)
+                    let decoratorSprite: PIXI.Sprite | null = null;
+                    if (this.mouseIsOver != null) {
+                        let desiredState: Decorator = Decorator.None;
+                        if (this.cells[x][y] != this.mouseIsOver) {
+                            let card = this.cells[x][y].card;
+                            let mouseIsOverCard = this.mouseIsOver?.card;
+                            if (card?.rank == mouseIsOverCard?.rank) {
+                                desiredState = Decorator.SameRank;
+                            }
+                            if ((card?.rank == Rank.A && mouseIsOverCard?.rank == Rank.K) ||
+                                (card?.rank == (mouseIsOverCard?.rank ?? 14) + 1)) {
+                                desiredState = Decorator.OneHigher;
+                            }
+                            if ((card?.rank == Rank.K && mouseIsOverCard?.rank == Rank.A) ||
+                                (card?.rank == (mouseIsOverCard?.rank ?? -1) - 1)) {
+                                desiredState = Decorator.OneLower;
+                            }
+                        }
+                            if (desiredState != Decorator.None) {
+                                let texture = GameState.decoratorTextures[desiredState];
+                                decoratorSprite = new PIXI.Sprite(texture);
+                                decoratorSprite.x = x * CARD_WIDTH;
+                                decoratorSprite.y = y * CARD_HEIGHT;
+                                this.playfield.addChild(decoratorSprite);
+                            }
+                    }
                     this.cells[x][y] = {
                         card: card,
                         backSprite: backSprite,
                         suitSprite: suitSprite,
                         rankSprite: rankSprite,
+                        decoratorSprite: decoratorSprite,
                         selected: selected,
                         x: x,
                         y: y
@@ -566,6 +610,7 @@ export class GameState extends State {
                         y: y
                     }
                 }
+
             }
     }
 
@@ -692,6 +737,7 @@ export class GameState extends State {
     public static suitTextures: { [index: number]: PIXI.Texture };
     public static backTextures: { [index: number]: PIXI.Texture };
     public static handTextures: { [index: number]: PIXI.Texture };
+    public static decoratorTextures: { [index: number]: PIXI.Texture };
     public static cursorTexture: PIXI.Texture;
     public static controlsTextures: { [index: number]: PIXI.Texture };
 
@@ -732,6 +778,15 @@ export class GameState extends State {
             let srcX = (i % 4) * width;
             let srcY = Math.floor(i / 4) * height;
             GameState.handTextures[i] = new PIXI.Texture(resources["hands_texture"].texture.baseTexture as PIXI.BaseTexture, new PIXI.Rectangle(srcX, srcY, width, height));
+        };
+
+        GameState.decoratorTextures = {};
+        for (let i = 0; i < 3; i++) {
+            let width = CARD_WIDTH;
+            let height = CARD_HEIGHT;
+            let srcX = ((i + 1) * width)
+            let srcY = 5 * height;
+            GameState.decoratorTextures[i] = new PIXI.Texture(resources["cards_texture"].texture.baseTexture as PIXI.BaseTexture, new PIXI.Rectangle(srcX, srcY, width, height));
         };
 
         GameState.controlsTextures = {};
