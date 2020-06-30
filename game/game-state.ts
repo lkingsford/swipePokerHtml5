@@ -7,8 +7,8 @@ import { HelpState } from './help-state'
 import { min, max } from './better-minmax'
 import { randInt } from './better-rand'
 
-const CARD_WIDTH = 60;
-const CARD_HEIGHT = 48;
+const CARD_WIDTH = 120;
+const CARD_HEIGHT = 96;
 const CARD_LEEWAY = 10;
 const HAND_WIDTH = 256;
 const HAND_HEIGHT = 256;
