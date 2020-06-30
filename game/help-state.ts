@@ -164,7 +164,9 @@ export class HelpState extends State.State {
 
     }
 
-    addHand(x: number, y: number, cards: Card[], description: string, scoringRules: string): void {
+    static CARD_WIDTH = 60;
+    static CARD_HEIGHT = 48;
+    addHand(x: number, y: number, cards: Card[], description: string, scoringRules: string): void {48
         let descriptionText = new PIXI.Text(description);
         let scoringRulesText = new PIXI.Text(`Scores: ${scoringRules}`, { fontSize: 14 });
         let iy = y + descriptionText.height + 5;
@@ -174,24 +176,30 @@ export class HelpState extends State.State {
         let exampleHandText = ""; // For screenreader
         for (let i: number = 0; i < 5; ++i) {
             let backSprite = new PIXI.Sprite(GameState.backTextures[1]);
-            let ix = x + i * backSprite.width;
+            let ix = x + i * HelpState.CARD_WIDTH;
             backSprite.x = ix;
             backSprite.y = iy;
+            backSprite.width = HelpState.CARD_WIDTH;
+            backSprite.height = HelpState.CARD_HEIGHT;
             this.container.addChild(backSprite);
             let rankSprite = new PIXI.Sprite(GameState.rankTextures[cards[i].rank! + cards[i].suit! * 13]);
             rankSprite.x = ix;
             rankSprite.y = iy;
+            rankSprite.width = HelpState.CARD_WIDTH / 2;
+            rankSprite.height = HelpState.CARD_HEIGHT;
             this.container.addChild(rankSprite);
             let suitSprite = new PIXI.Sprite(GameState.suitTextures[cards[i].suit!]);
-            suitSprite.x = ix + rankSprite.width;
+            suitSprite.x = ix + HelpState.CARD_WIDTH / 2;
             suitSprite.y = iy;
+            suitSprite.width = HelpState.CARD_WIDTH / 2;
+            suitSprite.height = HelpState.CARD_HEIGHT;
             this.container.addChild(suitSprite);
 
             exampleHandText += `${GameState.RANK_TEXT[cards[i].rank]} ${GameState.SUIT_TEXT[cards[i].suit]}`;
         }
 
         scoringRulesText.x = x;
-        scoringRulesText.y = iy + GameState.backTextures[1].height + 10;
+        scoringRulesText.y = iy + HelpState.CARD_HEIGHT + 10;
         this.container.addChild(scoringRulesText);
 
         this.ariaHand.textContent += `${description} Example: ${exampleHandText} Scores ${scoringRules.replace('×', ' times ')}`;
