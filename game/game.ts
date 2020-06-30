@@ -148,25 +148,27 @@ export class Game {
         let hand = { valid: false }
         let qOfRank = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].map((rank) => cards.filter((card) => card.rank == rank).length)
         if (max(qOfRank) == 5) {
+            let rank = (qOfRank.findIndex((i) => i == 4) + 1)
+            rank = rank == 1 ? 15 : rank + 1;
             return {
                 handType: HandType._5OfAKind,
-                score: 500,
+                score: 250 + rank * 10,
                 valid: true,
-                newCards: 15
+                newCards: 10
             }
         } else if (isFlush && isStraight && highestRank == Rank.A) {
             return {
                 handType: HandType.RoyalFlush,
                 score: 250,
                 valid: true,
-                newCards: 13
+                newCards: 8
             };
         } else if (isFlush && isStraight) {
             return {
                 handType: HandType.StraightFlush,
-                score: 150 + (Game.AdjustRankForAceAndIndex(highestRank)) * 5,
+                score: 190 + (Game.AdjustRankForAceAndIndex(highestRank)) * 4,
                 valid: true,
-                newCards: 111
+                newCards: 6
             };
         } else if (max(qOfRank) == 4) {
             let rank = (qOfRank.findIndex((i) => i == 4) + 1)
@@ -175,7 +177,7 @@ export class Game {
                 handType: HandType._4OfAKind,
                 score: 100 + rank * 4,
                 valid: true,
-                newCards: 10
+                newCards: 5
             };
         } else if ((max(qOfRank) == 3) && (min(qOfRank.filter((i) => i > 0))) == 2) {
             let rank = (qOfRank.findIndex((i) => i == 3))
@@ -184,14 +186,14 @@ export class Game {
                 handType: HandType.FullHouse,
                 score: 60 + rank * 3,
                 valid: true,
-                newCards: 8
+                newCards: 4
             };
         } else if (isFlush) {
             return {
                 handType: HandType.Flush,
                 score: 70,
                 valid: true,
-                newCards: 7
+                newCards: 3
             };
         } else if (isStraight) {
             let rank = Game.AdjustRankForAceAndIndex(highestRank);
@@ -199,7 +201,7 @@ export class Game {
                 handType: HandType.Straight,
                 score: 53 + rank,
                 valid: true,
-                newCards: 5
+                newCards: 2
             };
         } else if (max(qOfRank) == 3) {
             let rank = (qOfRank.findIndex((i) => i == 3))
@@ -208,7 +210,7 @@ export class Game {
                 handType: HandType._3OfAKind,
                 score: 26 + rank * 2,
                 valid: true,
-                newCards: 2
+                newCards: 1
             };
         } else if ((qOfRank.filter((i) => i == 2).length) == 2) {
             let rank = qOfRank.lastIndexOf(2)

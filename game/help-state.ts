@@ -75,7 +75,7 @@ export class HelpState extends State.State {
             { rank: Rank._9, suit: Suit.Heart },
             { rank: Rank._9, suit: Suit.Club }],
             "5 of a kind",
-            "500")
+            "250 + Rank × 10")
 
         this.addHand(380, 60,
             [{ rank: Rank._10, suit: Suit.Club },
@@ -93,7 +93,7 @@ export class HelpState extends State.State {
             { rank: Rank.K, suit: Suit.Club },
             { rank: Rank.J, suit: Suit.Club }],
             "Straight Flush",
-            "150 + Highest Rank × 5")
+            "190 + Highest Rank × 4")
 
         this.addHand(380, 190, [{ rank: Rank._8, suit: Suit.Club },
         { rank: Rank._9, suit: Suit.Diamond },
