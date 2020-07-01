@@ -25,8 +25,8 @@ export class HelpState extends State.State {
 
         let rules = "In the classic game, you've got a " +
         "10×10 grid of cards. \n" +
-        "You can select a valid poker hand horizontally" +
-        ", vertically or diagonally.\n" +
+        "You can select a valid poker hand with any cards that are adjacent " +
+        "to each other. \n"
         "When you've selected a valid hand, you can tap or click it to get " +
         "points for it. \n" +
         "It is then removed from the board. \n" +
